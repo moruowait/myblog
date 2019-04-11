@@ -73,7 +73,7 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: yilia
+theme: hexo-theme-yilia
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
@@ -82,7 +82,7 @@ deploy:
   repository: https://github.com/moruowait/moruowait.github.io.git
   branch: master
 
-# yilia themes config
+# hexo-theme-yilia themes config
 jsonContent:
   meta: false
   pages: false
