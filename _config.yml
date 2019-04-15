@@ -99,6 +99,6 @@ jsonContent:
     comments: false
     link: false
     permalink: false
-    excerpt: false
+    excerpt: true
     categories: false
     tags: true
