@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="莫的主页">
 <meta property="og:description" content="性能对比首先在一个目录下新建两个文件： main.go 1234567891011121314151617// main.gopackage mainimport &quot;sync&quot;var mutex = sync.Mutex&amp;#123;&amp;#125;var ch = make(chan bool, 1)func UseMutex() &amp;#123;    mutex.Lock()    mutex.Unl">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-04-19T07:35:20.898Z">
+<meta property="og:updated_time" content="2019-04-19T07:39:48.763Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="加锁 Mutex 和 Channel 性能对比">
 <meta name="twitter:description" content="性能对比首先在一个目录下新建两个文件： main.go 1234567891011121314151617// main.gopackage mainimport &quot;sync&quot;var mutex = sync.Mutex&amp;#123;&amp;#125;var ch = make(chan bool, 1)func UseMutex() &amp;#123;    mutex.Lock()    mutex.Unl">
@@ -172,6 +172,7 @@
         <h2 id="性能对比"><a href="#性能对比" class="headerlink" title="性能对比"></a>性能对比</h2><p>首先在一个目录下新建两个文件：</p>
 <p>main.go</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// main.go</span></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"sync"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> mutex = sync.Mutex&#123;&#125;</span><br><span class="line"><span class="keyword">var</span> ch = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">bool</span>, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">UseMutex</span><span class="params">()</span></span> &#123;</span><br><span class="line">    mutex.Lock()</span><br><span class="line">    mutex.Unlock()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">UseChan</span><span class="params">()</span></span> &#123;</span><br><span class="line">    ch &lt;- <span class="literal">true</span></span><br><span class="line">    &lt;-ch</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
 <p>main_test.go</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// main_test.go</span></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"testing"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">BenchmarkUseMutex</span><span class="params">(b *testing.B)</span></span> &#123;</span><br><span class="line">    <span class="keyword">for</span> n := <span class="number">0</span>; n &lt; b.N; n++ &#123;</span><br><span class="line">        UseMutex()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">BenchmarkUseChan</span><span class="params">(b *testing.B)</span></span> &#123;</span><br><span class="line">    <span class="keyword">for</span> n := <span class="number">0</span>; n &lt; b.N; n++ &#123;</span><br><span class="line">        UseChan()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>然后在该文件路径下执行 benchmark：</p>
@@ -412,11 +413,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">技术名词</a>
+                <a href="javascript:void(0)" class="js-tag color3">Go</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Go</a>
+                <a href="javascript:void(0)" class="js-tag color5">技术名词</a>
               </li>
              
               <li class="article-tag-list-item">
