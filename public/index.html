@@ -146,6 +146,88 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-mac_path" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/04/19/mac_path/">MAC 如何配置 PATH 环境变量？</a>
+    </h1>
+  
+
+        
+        <a href="/2019/04/19/mac_path/" class="archive-article-date">
+  	<time datetime="2019-04-19T09:28:10.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-19</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>之前在配置 MAC 环境变量的时候，总是云里雾里的不知道要怎么配置，都是从网上找配置方案，然后成功了完事大吉，不成功就换一种配置方案，所以并不知道为什么要这么配置，今天就来整理一下 MAC 应该如何来配置环境变量。</p>
+<h2 id="Mac-osx-下环境变量的加载顺序"><a href="#Mac-osx-下环境变量的加载顺序" class="headerlink" title="Mac osx 下环境变量的加载顺序"></a>Mac osx 下环境变量的加载顺序</h2><p>MAC 默认的终端是 bash。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">/etc/profile    <span class="comment"># 系统级，系统启动加载</span></span><br><span class="line">/etc/paths      <span class="comment"># 系统级，系统启动加载</span></span><br><span class="line">~/.bash_profile <span class="comment"># 用户级</span></span><br><span class="line">~/.bash_login   <span class="comment"># 用户级</span></span><br><span class="line">~/.profile      <span class="comment"># 用户级</span></span><br><span class="line">~/.bashrc       <span class="comment"># 用户级</span></span><br></pre></td></tr></table></figure>
+        
+          <a class="article-more-a" href="/2019/04/19/mac_path/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">PATH</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">MAC</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/04/19/mac_path/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-mutex_or_channel" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -479,7 +561,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Go</a>
+                <a href="javascript:void(0)" class="js-tag color5">PATH</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">MAC</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -492,6 +578,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Log</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Go</a>
               </li>
             
             <div class="clearfix"></div>
