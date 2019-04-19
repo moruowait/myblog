@@ -6,20 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>什么是 RSS ？ | 莫的主页</title>
+  <title>加锁 Mutex 和 Channel 性能对比 | 莫的主页</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="什么是 RSS ？在解释 RSS 是什么之前，让我先来打一个比方。 读大学的时候，我有个习惯，就是每天要去看食堂后面的海报栏。在那里，会贴出各种各样最新的消息，比如哪个系要开讲座了、星期二晚上的电影放什么、二手货转让等等。只要看一下海报栏，就会对学校的各种活动心中有数。 如果没有海报栏的话，要想知道这些消息就会很麻烦。讲座消息会贴在各个系自己的公告栏里，电影排片表是贴在电影院里的，二手货消息则会">
-<meta name="keywords" content="技术名词">
+  <meta name="description" content="性能对比首先在一个目录下新建两个文件： main.go 1234567891011121314151617// main.gopackage mainimport &quot;sync&quot;var mutex = sync.Mutex&amp;#123;&amp;#125;var ch = make(chan bool, 1)func UseMutex() &amp;#123;    mutex.Lock()    mutex.Unl">
+<meta name="keywords" content="Go">
 <meta property="og:type" content="article">
-<meta property="og:title" content="什么是 RSS ？">
-<meta property="og:url" content="http://yoursite.com/2019/04/14/rss/index.html">
+<meta property="og:title" content="加锁 Mutex 和 Channel 性能对比">
+<meta property="og:url" content="http://yoursite.com/2019/04/19/mutex_or_channel/index.html">
 <meta property="og:site_name" content="莫的主页">
-<meta property="og:description" content="什么是 RSS ？在解释 RSS 是什么之前，让我先来打一个比方。 读大学的时候，我有个习惯，就是每天要去看食堂后面的海报栏。在那里，会贴出各种各样最新的消息，比如哪个系要开讲座了、星期二晚上的电影放什么、二手货转让等等。只要看一下海报栏，就会对学校的各种活动心中有数。 如果没有海报栏的话，要想知道这些消息就会很麻烦。讲座消息会贴在各个系自己的公告栏里，电影排片表是贴在电影院里的，二手货消息则会">
+<meta property="og:description" content="性能对比首先在一个目录下新建两个文件： main.go 1234567891011121314151617// main.gopackage mainimport &quot;sync&quot;var mutex = sync.Mutex&amp;#123;&amp;#125;var ch = make(chan bool, 1)func UseMutex() &amp;#123;    mutex.Lock()    mutex.Unl">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-04-15T03:00:22.517Z">
+<meta property="og:updated_time" content="2019-04-19T07:35:20.898Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="什么是 RSS ？">
-<meta name="twitter:description" content="什么是 RSS ？在解释 RSS 是什么之前，让我先来打一个比方。 读大学的时候，我有个习惯，就是每天要去看食堂后面的海报栏。在那里，会贴出各种各样最新的消息，比如哪个系要开讲座了、星期二晚上的电影放什么、二手货转让等等。只要看一下海报栏，就会对学校的各种活动心中有数。 如果没有海报栏的话，要想知道这些消息就会很麻烦。讲座消息会贴在各个系自己的公告栏里，电影排片表是贴在电影院里的，二手货消息则会">
+<meta name="twitter:title" content="加锁 Mutex 和 Channel 性能对比">
+<meta name="twitter:description" content="性能对比首先在一个目录下新建两个文件： main.go 1234567891011121314151617// main.gopackage mainimport &quot;sync&quot;var mutex = sync.Mutex&amp;#123;&amp;#125;var ch = make(chan bool, 1)func UseMutex() &amp;#123;    mutex.Lock()    mutex.Unl">
   
     <link rel="alternative" href="/atom.xml" title="莫的主页" type="application/atom+xml">
   
@@ -149,49 +149,48 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-rss" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-mutex_or_channel" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      什么是 RSS ？
+      加锁 Mutex 和 Channel 性能对比
     </h1>
   
 
         
-        <a href="/2019/04/14/rss/" class="archive-article-date">
-  	<time datetime="2019-04-14T10:28:44.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-14</time>
+        <a href="/2019/04/19/mutex_or_channel/" class="archive-article-date">
+  	<time datetime="2019-04-19T06:38:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-19</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="什么是-RSS-？"><a href="#什么是-RSS-？" class="headerlink" title="什么是 RSS ？"></a>什么是 RSS ？</h2><p>在解释 RSS 是什么之前，让我先来打一个比方。</p>
-<p>读大学的时候，我有个习惯，就是每天要去看食堂后面的海报栏。在那里，会贴出各种各样最新的消息，比如哪个系要开讲座了、星期二晚上的电影放什么、二手货转让等等。只要看一下海报栏，就会对学校的各种活动心中有数。</p>
-<p>如果没有海报栏的话，要想知道这些消息就会很麻烦。讲座消息会贴在各个系自己的公告栏里，电影排片表是贴在电影院里的，二手货消息则会贴在各幢宿舍的楼道里。我所在的大学有 20 几个系，一万多人，要想知道所有这些消息的话，即使是可能的话，也会相当的麻烦。</p>
-<p>从这个例子出发，让我们来考虑一下互联网。</p>
-<a id="more"></a>
-<p>互联网是什么？最直观的说，就是一个杂乱无章的巨大信息源，其丰富和杂乱的程度，不仅是巨大的，而且几乎是无限的。</p>
-<p>一个使用者，要想及时掌握的互联网上出现的最新信息，有办法吗？</p>
-<p>答案是没有办法，他只有一个网站一个网站的打开，去看有什么最新内容，就好比每天都必须去每一个系里走一遍，看有什么最新讲座。如果是几个网站，哪倒也不难，都去看一遍也花不了多少时间。但是随着你关注的网站数量上升，这项工作会迅速的变为 “Mission Impossible”。想象一下，如果你每天关注几十个、甚至几百个网站，会是怎样的情景。光是打开它们的首页，就要花费多少时间啊，更别说浏览花去的时间了。</p>
-<p>也许有人会说，普通人的话，谁会关心那么多网站啊？</p>
-<p>我要说，哪怕你只是一个网络的初级或最单纯的使用者，与你发生关系的网站数量也在急剧增加，因为 Blog 出现了。越来越多的人开始写作网络日志（Blog），把自己的想法和生活在网上展示，其中也必然包括你的朋友，或者其他你感兴趣的人。你想知道他/她的最新动向，就势必要留心他/她的 Blog。所以，你的网站浏览清单总有一天会和你的电话本、MSN Message 好友列表一样多，甚至更多。</p>
-<p>那时，你会发现浏览网站会变成一种困难和低效率的行为。</p>
-<p>有没有办法找到互联网上的”海报栏”，只去一个地方就知道你所想知道的所有最新内容？</p>
-<p>有，那就是 RSS。</p>
-<h2 id="如何使用？"><a href="#如何使用？" class="headerlink" title="如何使用？"></a>如何使用？</h2><p>准确的说，RSS 就像一个网站的海报，里面包括这个网站的最新内容，会自动更新。所以，我们只要订阅了 RSS，就不会错过自己喜欢的网站的更新了。</p>
-<p>但是光有海报还不行，还必须有海报栏，也就是说必须有 RSS 阅读器才行。因为 RSS 只是数据源，它本身是写给程序看的，必须经过阅读器转换，才能成为可以浏览的格式。</p>
-<p>RSS 阅读器多种多样，大致分为两种，一种是桌面型的，需要安装；另一种是在线型，直接使用浏览器进行阅读。</p>
-<p>在浏览器中订阅 RSS，就必须先知道 RSS 的地址。一般来说，各个网站的首页都会用显著位置标明。名称可能会有些不同，比如 RSS、XML、FEED，大家知道它们指的都是同样的东西就可以了。有时 RSS 后面还会带有版本号，比如 2.0、1.0，甚至 0.92，这个不必理会，它们只是内部格式不同，内容都是一样。</p>
-<p>将 RSS 地址复制下来以后，你就可以在在线阅读器中添加。</p>
-<p>以后，只用打开这一个网页，就可以看到所有你喜欢的网站的最新内容了。</p>
+        <h2 id="性能对比"><a href="#性能对比" class="headerlink" title="性能对比"></a>性能对比</h2><p>首先在一个目录下新建两个文件：</p>
+<p>main.go</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// main.go</span></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"sync"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> mutex = sync.Mutex&#123;&#125;</span><br><span class="line"><span class="keyword">var</span> ch = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">bool</span>, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">UseMutex</span><span class="params">()</span></span> &#123;</span><br><span class="line">    mutex.Lock()</span><br><span class="line">    mutex.Unlock()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">UseChan</span><span class="params">()</span></span> &#123;</span><br><span class="line">    ch &lt;- <span class="literal">true</span></span><br><span class="line">    &lt;-ch</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>main_test.go</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// main_test.go</span></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"testing"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">BenchmarkUseMutex</span><span class="params">(b *testing.B)</span></span> &#123;</span><br><span class="line">    <span class="keyword">for</span> n := <span class="number">0</span>; n &lt; b.N; n++ &#123;</span><br><span class="line">        UseMutex()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">BenchmarkUseChan</span><span class="params">(b *testing.B)</span></span> &#123;</span><br><span class="line">    <span class="keyword">for</span> n := <span class="number">0</span>; n &lt; b.N; n++ &#123;</span><br><span class="line">        UseChan()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后在该文件路径下执行 benchmark：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go <span class="built_in">test</span> -bench=.</span><br></pre></td></tr></table></figure>
+<p>结果如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">goos: darwin</span><br><span class="line">goarch: amd64</span><br><span class="line">pkg: testproject/race</span><br><span class="line">BenchmarkUseMutex-4     100000000               15.9 ns/op</span><br><span class="line">BenchmarkUseChan-4      30000000                50.1 ns/op</span><br><span class="line">PASS</span><br><span class="line">ok      testproject/race        3.173s</span><br></pre></td></tr></table></figure>
+<p>从压测结果来看，加锁的方式是使用 Channel 方式的 3.1 倍</p>
+<h2 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h2><ul>
+<li><p>channel 的成本高于 Mutex</p>
+<ol>
+<li>channel 内部有 Mutex，是通过共享内存实现的。(TODO:这里少一个传送门)</li>
+<li>channel 内部可能有 Cond，用来等待或唤醒满足条件的 goroutine(TODO:这里少一个传送门)</li>
+<li>出让 cpu 并且让另一个 goroutine 获得执行机会，这个切换周期不低，远高于 Mutex 检查竞争状态的成本（后者通常只是一个原子操作）</li>
+</ol>
+</li>
+</ul>
 <h2 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h2><ul>
-<li>wiki：<a href="https://en.wikipedia.org/wiki/RSS" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/RSS</a></li>
-<li>菜鸟教程：<a href="http://www.runoob.com/rss/rss-tutorial.html" target="_blank" rel="noopener">http://www.runoob.com/rss/rss-tutorial.html</a></li>
-<li>[转自]阮一峰：<a href="http://www.ruanyifeng.com/blog/2006/01/rss.html" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2006/01/rss.html</a></li>
+<li><a href="https://www.colabug.com/278134.html" target="_blank" rel="noopener">加锁 Mutex 和 Channel 性能对比</a></li>
+<li><a href="http://lessisbetter.site/2019/01/14/golang-channel-and-mutex/" target="_blank" rel="noopener">Golang并发：再也不愁选channel还是选锁</a></li>
 </ul>
 
       
@@ -206,7 +205,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">技术名词</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Go</a>
         		</li>
       		
 		</ul>
@@ -262,7 +261,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2019/04/14/rss/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2019/04/19/mutex_or_channel/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -276,15 +275,11 @@
   
 <nav id="article-nav">
   
-    <a href="/2019/04/18/logrotate/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          什么是 logrotate ？
-        
-      </div>
-    </a>
   
+    <a href="/2019/04/18/logrotate/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">什么是 logrotate ？</div>
+      <i class="icon-circle-right"></i>
+    </a>
   
 </nav>
 
@@ -309,7 +304,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是-RSS-？"><span class="toc-number">1.</span> <span class="toc-text">什么是 RSS ？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何使用？"><span class="toc-number">2.</span> <span class="toc-text">如何使用？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#相关链接"><span class="toc-number">3.</span> <span class="toc-text">相关链接</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#性能对比"><span class="toc-number">1.</span> <span class="toc-text">性能对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#原因分析"><span class="toc-number">2.</span> <span class="toc-text">原因分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#相关链接"><span class="toc-number">3.</span> <span class="toc-text">相关链接</span></a></li></ol>
                     </div>
                 </span>
             </div>

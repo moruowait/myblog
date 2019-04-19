@@ -146,6 +146,224 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-mutex_or_channel" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/04/19/mutex_or_channel/">加锁 Mutex 和 Channel 性能对比</a>
+    </h1>
+  
+
+        
+        <a href="/2019/04/19/mutex_or_channel/" class="archive-article-date">
+  	<time datetime="2019-04-19T06:38:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-19</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="性能对比"><a href="#性能对比" class="headerlink" title="性能对比"></a>性能对比</h2><p>首先在一个目录下新建两个文件：</p>
+<p>main.go</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// main.go</span></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"sync"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> mutex = sync.Mutex&#123;&#125;</span><br><span class="line"><span class="keyword">var</span> ch = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">bool</span>, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">UseMutex</span><span class="params">()</span></span> &#123;</span><br><span class="line">    mutex.Lock()</span><br><span class="line">    mutex.Unlock()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">UseChan</span><span class="params">()</span></span> &#123;</span><br><span class="line">    ch &lt;- <span class="literal">true</span></span><br><span class="line">    &lt;-ch</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>main_test.go</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// main_test.go</span></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"testing"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">BenchmarkUseMutex</span><span class="params">(b *testing.B)</span></span> &#123;</span><br><span class="line">    <span class="keyword">for</span> n := <span class="number">0</span>; n &lt; b.N; n++ &#123;</span><br><span class="line">        UseMutex()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">BenchmarkUseChan</span><span class="params">(b *testing.B)</span></span> &#123;</span><br><span class="line">    <span class="keyword">for</span> n := <span class="number">0</span>; n &lt; b.N; n++ &#123;</span><br><span class="line">        UseChan()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后在该文件路径下执行 benchmark：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go <span class="built_in">test</span> -bench=.</span><br></pre></td></tr></table></figure>
+<p>结果如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">goos: darwin</span><br><span class="line">goarch: amd64</span><br><span class="line">pkg: testproject/race</span><br><span class="line">BenchmarkUseMutex-4     100000000               15.9 ns/op</span><br><span class="line">BenchmarkUseChan-4      30000000                50.1 ns/op</span><br><span class="line">PASS</span><br><span class="line">ok      testproject/race        3.173s</span><br></pre></td></tr></table></figure>
+<p>从压测结果来看，加锁的方式是使用 Channel 方式的 3.1 倍</p>
+<h2 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h2><ul>
+<li><p>channel 的成本高于 Mutex</p>
+<ol>
+<li>channel 内部有 Mutex，是通过共享内存实现的。(TODO:这里少一个传送门)</li>
+<li>channel 内部可能有 Cond，用来等待或唤醒满足条件的 goroutine(TODO:这里少一个传送门)</li>
+<li>出让 cpu 并且让另一个 goroutine 获得执行机会，这个切换周期不低，远高于 Mutex 检查竞争状态的成本（后者通常只是一个原子操作）</li>
+</ol>
+</li>
+</ul>
+<h2 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h2><ul>
+<li><a href="https://www.colabug.com/278134.html" target="_blank" rel="noopener">加锁 Mutex 和 Channel 性能对比</a></li>
+<li><a href="http://lessisbetter.site/2019/01/14/golang-channel-and-mutex/" target="_blank" rel="noopener">Golang并发：再也不愁选channel还是选锁</a></li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Go</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/04/19/mutex_or_channel/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-logrotate" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/04/18/logrotate/">什么是 logrotate ？</a>
+    </h1>
+  
+
+        
+        <a href="/2019/04/18/logrotate/" class="archive-article-date">
+  	<time datetime="2019-04-18T10:28:44.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-18</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="什么是-logrotate"><a href="#什么是-logrotate" class="headerlink" title="什么是 logrotate"></a>什么是 logrotate</h2><p>logrotate 旨在简化生成大量日志文件的系统的管理。它允许自动循环、压缩、删除和邮寄日志文件。每个日志文件可以按每天、每周、每月的粒度来处理，也可以在其增长过大时处理。</p>
+<p>通常来说，logrotate 作为日常 cron 作业运行。它一天内修改日志的次数不会超过一次，除非该日志的标准基于日志的大小，并且 logrotate 每天运行一次以上，或者使用 <code>-f</code> 或 <code>-force</code> 的选项。</p>
+<p>在命令行上可以给出任意数量的配置文件。稍后的配置文件可能会覆盖前面文件中给出的选项，因此列出 logrotate 配置文件的顺序很重要。通常，应该使用一个配置文件，其中包含需要的任何其他配置文件。有关如何使用 include 指令来完成此任务的更多信息，请参见 man page。如果在命令行上给出一个目录，则该目录中的每个文件都是配置文件。</p>
+<p>如果没有给出命令行参数，logrotate 将打印版本和版权信息，以及一个简短的使用总结。如果在循环日志时发生任何错误，logrotate 将以非零状态退出。</p>
+<h2 id="如何安装-logrotate"><a href="#如何安装-logrotate" class="headerlink" title="如何安装 logrotate"></a>如何安装 logrotate</h2><h3 id="如何在-Mac-上安装-logrotate"><a href="#如何在-Mac-上安装-logrotate" class="headerlink" title="如何在 Mac 上安装 logrotate"></a>如何在 Mac 上安装 logrotate</h3><ul>
+<li><p>先安装 Homebrew</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/bin/ruby -e <span class="string">"<span class="variable">$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)</span>"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>利用 Homebrew 安装 logrotate</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install logrotate</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="可能会遇到的问题"><a href="#可能会遇到的问题" class="headerlink" title="可能会遇到的问题"></a>可能会遇到的问题</h3><p>安装 logroate 后可能会遇到 logrotate 命令找不到的问题，其原因是 logrotate 安装到了 <code>/usr/local/sbin</code> 下，如果你的 PATH 环境变量没有该路径就找不到 logrotate，所以你需要将该路径加入 PATH 下。</p>
+<h2 id="查看-logrotate-文档"><a href="#查看-logrotate-文档" class="headerlink" title="查看 logrotate 文档"></a>查看 logrotate 文档</h2><ul>
+<li><code>man logrotate</code> 命令可以在终端查看 logrotate 文档</li>
+<li>如果你没有安装 logrotate 在终端 man page 下是找不到 logrotate 文档的，你可以点击<a href="https://linux.die.net/man/8/logrotate" target="_blank" rel="noopener">传送门</a>查看文档</li>
+</ul>
+<h2 id="怎么使用-logrotate"><a href="#怎么使用-logrotate" class="headerlink" title="怎么使用 logrotate"></a>怎么使用 logrotate</h2><ul>
+<li><p>启动与停止</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">brew services start logrotate   <span class="comment"># 启动</span></span><br><span class="line">brew services stop logrotate    <span class="comment"># 停止</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>选项</p>
+<ul>
+<li><code>-?，--help</code>：帮助。</li>
+<li><code>-d，--debug</code>：打开 debug 模式，日志和 logrotate 的状态文件不会被更新，只会打印 debug 信息。详细显示指令执行过程，便于排错活了解程序执行的情况。</li>
+<li><code>-f，--force</code>：让 logrotate 强制执行一次循环。有时，在向 logrotate 配置文件添加新条目之后，或者在手动删除旧日志文件时，这是非常有用的，因为将创建新文件，并且日志记录将正确地继续。</li>
+<li><code>-l，--log</code> <u>file</u>：让 logrotate 的 log 详细输出到 log_file 文件中。记录到该文件的详细输出与使用 -v 运行 logrotate 时相同。每次执行 logrotate 时都会覆盖日志文件。</li>
+<li><p><code>-m，--mail</code> <u>command</u>：邮寄日志，接受以下参数</p>
+<ol>
+<li><code>-s subject</code>：标题</li>
+<li>收件人</li>
+</ol>
+<p>然后命令必须读取标准输入上的消息并将其发送给收件人。默认的邮件命令是 <code>/bin/mail</code>。</p>
+</li>
+<li><code>-s，--state</code> <u>statefile</u>：让 logrotate 使用别用状态文件。如果 logrotate 作为不同的用户运行于不同的日志文件集，这将非常有用。默认的状态文件为 <code>/usr/local/var/lib/logrotate.status</code>。</li>
+<li><code>usage</code>：使用指南</li>
+<li><code>-v，--verbose</code>：打开 verbose 模式，例如在循环期间显示消息</li>
+<li><code>--version</code>：版本</li>
+</ul>
+</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">技术名词</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">运维</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Log</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/04/18/logrotate/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-rss" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -315,6 +533,18 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">技术名词</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Go</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">运维</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Log</a>
               </li>
             
             <div class="clearfix"></div>
