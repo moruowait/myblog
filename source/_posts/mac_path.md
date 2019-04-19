@@ -58,7 +58,7 @@ export PATH=$PATH:<PATH 1>:<PATH 2>:----:<PATH N>
 
 - 编辑 `/etc/bashrc`（一般在这个文件中添加系统级环境变量）
 
-    全局（共有）变量，bash shell 执行时，不管是何种方式，都会读取此文件
+    全局（共有）变量，bash shell 执行时，不管是何种方式，都会读取此文件(当 .bash_profile 存在且在 .bash_profile 里没有声明 加入 .bashrc 环境的时候，会被忽略)
 
 - 编辑 `/etc/paths.d` 下的文件
 
@@ -88,3 +88,8 @@ export PATH=$PATH:<PATH 1>:<PATH 2>:----:<PATH N>
     PATH=$PATH:/xxx/xxx
     ```
 编辑完文件后需要执行 `source ~/.zshrc` 使其生效并需要重新启动终端来加载环境变量。
+
+## 相关链接
+
+- [MAC 设置环境变量 PATH 的几种方法](https://www.cnblogs.com/shineqiujuan/p/4693404.html)
+- [bash/zsh 的四种运行模式](https://zhuanlan.zhihu.com/p/47819029)
