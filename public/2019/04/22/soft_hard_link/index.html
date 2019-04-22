@@ -6,15 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Tag: 技术名词 | 莫的主页</title>
+  <title>Linux 中硬连接（hard link）与软连接（symbolic link）的区别 | 莫的主页</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="莫的主页">
-<meta property="og:url" content="http://yoursite.com/tags/技术名词/index.html">
+  <meta name="description" content="首先要简单了解一下 Linux 的 Ext 文件系统，此处传送门。 Linux Ext文件系统Linux 的 Ext 文件系统是如何与磁盘内存产生对应的呢？我们知道，在使用磁盘内存之前，需要为磁盘分区，然后为所分区域格式化出一个统一的文件系统（也有例外，如LVM与磁盘阵列技术）。那么，在这样一个统一的文件系统中，根据数据的不同，就可以将内存分为以下 3 种类型：  inode：记录文件的属性，一个">
+<meta name="keywords" content="技术名词,Linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux 中硬连接（hard link）与软连接（symbolic link）的区别">
+<meta property="og:url" content="http://yoursite.com/2019/04/22/soft_hard_link/index.html">
 <meta property="og:site_name" content="莫的主页">
+<meta property="og:description" content="首先要简单了解一下 Linux 的 Ext 文件系统，此处传送门。 Linux Ext文件系统Linux 的 Ext 文件系统是如何与磁盘内存产生对应的呢？我们知道，在使用磁盘内存之前，需要为磁盘分区，然后为所分区域格式化出一个统一的文件系统（也有例外，如LVM与磁盘阵列技术）。那么，在这样一个统一的文件系统中，根据数据的不同，就可以将内存分为以下 3 种类型：  inode：记录文件的属性，一个">
 <meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-04-22T07:07:41.780Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="莫的主页">
+<meta name="twitter:title" content="Linux 中硬连接（hard link）与软连接（symbolic link）的区别">
+<meta name="twitter:description" content="首先要简单了解一下 Linux 的 Ext 文件系统，此处传送门。 Linux Ext文件系统Linux 的 Ext 文件系统是如何与磁盘内存产生对应的呢？我们知道，在使用磁盘内存之前，需要为磁盘分区，然后为所分区域格式化出一个统一的文件系统（也有例外，如LVM与磁盘阵列技术）。那么，在这样一个统一的文件系统中，根据数据的不同，就可以将内存分为以下 3 种类型：  inode：记录文件的属性，一个">
   
     <link rel="alternative" href="/atom.xml" title="莫的主页" type="application/atom+xml">
   
@@ -144,36 +149,75 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-soft_hard_link" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/04/22/soft_hard_link/" class="archive-article-date">
-  	<time datetime="2019-04-22T04:17:10.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-22</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/04/22/soft_hard_link/">Linux 中硬连接（hard link）与软连接（symbolic link）的区别</a>
+    <h1 class="article-title" itemprop="name">
+      Linux 中硬连接（hard link）与软连接（symbolic link）的区别
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2019/04/22/soft_hard_link/" class="archive-article-date">
+  	<time datetime="2019-04-22T04:17:10.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-22</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>首先要简单了解一下 Linux 的 Ext 文件系统，此处<a href="https://www.cnblogs.com/justmine/p/9128730.html" target="_blank" rel="noopener">传送门</a>。</p>
+<h2 id="Linux-Ext文件系统"><a href="#Linux-Ext文件系统" class="headerlink" title="Linux Ext文件系统"></a>Linux Ext文件系统</h2><p>Linux 的 Ext 文件系统是如何与磁盘内存产生对应的呢？我们知道，在使用磁盘内存之前，需要为磁盘分区，然后为所分区域格式化出一个统一的文件系统（也有例外，如LVM与磁盘阵列技术）。那么，在这样一个统一的文件系统中，根据数据的不同，就可以将内存分为以下 3 种类型：</p>
+<ul>
+<li><p>inode：记录文件的属性，一个文件占用一个 inode，同时记录此文件的数据所在的 block 号码。当用户搜索或者访问一个文件时，UNIX 系统通过 inode 表查找正确的 inode 编号。在找到 inode 编号之后，相关的命令才可以访问该 inode，并对其进行适当的更改。</p>
+<blockquote>
+<p>例如使用vi来编辑一个文件。当您键入vi <filename> 时，在 inode 表中找到 inode 编号之后，才允许您打开该inode。在 vi 的编辑会话期间，更改了该inode中的某些属性，当您完成操作并键入 :wq 时，将关闭并释放该 inode。通过这种方式，如果两个用户试图对同一个文件进行编辑， inode 已经在第一个编辑会话期间分配给了另一个用户 ID (UID)，因此第二个编辑任务就必须等待，直到该 inode 释放为止。</filename></p>
+</blockquote>
+</li>
+</ul>
+<a id="more"></a>
+<ul>
+<li><p>block：存储的文件内容，也叫数据区块(data block)，每个block都有自己的编号，Ext2支持的单位block容量仅为1k、2k、4k。如果文件太大，则会占用多个block。</p>
+</li>
+<li><p>super block：记录文件系统的整体信息，包括inode/block的总量、使用量、剩余量，以及文件系统的格式与相关信息等。</p>
+</li>
+</ul>
+<p>因此对于一个文件来说，它的inode号就类似于id的作用，用于存放关于该文件的一些基本信息。</p>
+<h2 id="硬连接（hard-link）"><a href="#硬连接（hard-link）" class="headerlink" title="硬连接（hard link）"></a>硬连接（hard link）</h2><p>若两个文件，拥有同样的 inode，那么就产生了所谓的硬连接。</p>
+<p>1、创建文件 a，并查看属性</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ touch a</span><br><span class="line">$ ll a</span><br><span class="line">-rw-r--r--  1 nobody  staff     0B  4 22 12:29 a</span><br></pre></td></tr></table></figure>
+<p>tips：如果不是很懂 Linux 中文档属性、拥有者、群组、权限、差异等，点击<a href="https://www.cnblogs.com/justmine/p/9053419.html" target="_blank" rel="noopener">传送门</a>。</p>
+<p>2、创建 a 的硬连接 b，并查看 a 和 b 的属性</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ ln a b</span><br><span class="line">$ ll a b</span><br><span class="line">-rw-r--r--  2 nobody  staff     0B  4 22 12:29 a</span><br><span class="line">-rw-r--r--  2 nobody  staff     0B  4 22 12:29 b</span><br></pre></td></tr></table></figure>
+<p>可以发现，a和b的属性完全一致，注意其中第二列数字表示的就是该文件的硬连接数。</p>
+<p>3、对于硬连接来说，它的好处就是“安全”。你将其中任何一个文件名删除(rm -f)，文件都是存在的，因为文件的inode一直存在</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ rm -f a</span><br><span class="line">$ ll b</span><br><span class="line">-rw-r--r--  1 nobody  staff     0B  4 22 12:29 b</span><br></pre></td></tr></table></figure>
+<p><code>并且由于两个文件都是对应的相同的 inode 和 block，因此对任何其中一个进行修改编辑，结果都会生效。</code></p>
+<p>4、如果此时重建 a，则新建的 a 与 b 没有任何关系，故存在硬连接关系</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-rw-r--r--  1 nobody  staff     0B  4 22 12:40 a</span><br><span class="line">-rw-r--r--  1 nobody  staff     0B  4 22 12:29 b</span><br></pre></td></tr></table></figure>
+<h2 id="软连接（symbolic-link）"><a href="#软连接（symbolic-link）" class="headerlink" title="软连接（symbolic link）"></a>软连接（symbolic link）</h2><p>软连接的意义就如同 windows 平台下的快捷方式，它是一个类型为 l 的文件，拥有自己的 inode 和 block，对它进行操作也相当于对被 link 文件进行操作。</p>
+<p><code>语法： ln -s source_file target_file</code></p>
+<p>1、创建 a 和 a 的软连接 b</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ touch a</span><br><span class="line">$ ll a</span><br><span class="line">-rw-r--r--  1 nobody  staff     0B  4 22 12:47 a</span><br><span class="line">$ ln -s a b</span><br><span class="line">$ ll a b</span><br><span class="line">-rw-r--r--  1 nobody  staff     0B  4 22 12:47 a</span><br><span class="line">lrwxr-xr-x  1 nobody  staff     1B  4 22 12:49 b -&gt; a</span><br></pre></td></tr></table></figure>
+<p>2、为 a 写入数据，查看 b 中的内容。删除 a，再查看 b 的内容会发现 b 的连接失效了</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ cat &gt; a &lt;&lt;EOF</span><br><span class="line">heredoc&gt; This is a <span class="built_in">test</span> !</span><br><span class="line">heredoc&gt; EOF</span><br><span class="line">$ cat b</span><br><span class="line">This is a <span class="built_in">test</span> !</span><br><span class="line">$ rm -f a</span><br><span class="line">$ cat b</span><br><span class="line">cat: b: No such file or directory</span><br></pre></td></tr></table></figure>
+<p>3、重新创建文件 a，然后查看 b 的内容会发现b重新连接成功了，并且连接至了原来同名的a文件。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ ll b</span><br><span class="line">lrwxr-xr-x  1 nobody  staff     1B  4 22 12:49 b -&gt; a</span><br><span class="line">$ touch a</span><br><span class="line">$ cat &gt; a &lt;&lt; EOF</span><br><span class="line">heredoc&gt; This is another <span class="built_in">test</span> !</span><br><span class="line">heredoc&gt; EOF</span><br><span class="line">$ cat b</span><br><span class="line">This is another <span class="built_in">test</span> !</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>对于硬连接来说，共享的是 inode，重新创建的同名文件不具有相同的 inode，因此于原来毫无干系。而对于软连接来说，它连接记录的是一个文件的绝对路径，因此当重新创建同名文件时候，软连接又重新生效了。</p>
+<h2 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h2><ul>
+<li><a href="https://blog.csdn.net/gxzc936733992/article/details/49340429" target="_blank" rel="noopener">Linux 中硬连接（hard link）与软连接（symbolic link）的区别</a></li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -189,103 +233,119 @@
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2019/04/22/soft_hard_link/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/04/18/logrotate/" class="archive-article-date">
-  	<time datetime="2019-04-18T10:28:44.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-18</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2019/04/19/mac_path/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">MAC 如何配置 PATH 环境变量？</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/04/18/logrotate/">什么是 logrotate ？</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">技术名词</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">运维</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Log</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux-Ext文件系统"><span class="toc-number">1.</span> <span class="toc-text">Linux Ext文件系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#硬连接（hard-link）"><span class="toc-number">2.</span> <span class="toc-text">硬连接（hard link）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#软连接（symbolic-link）"><span class="toc-number">3.</span> <span class="toc-text">软连接（symbolic link）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#相关链接"><span class="toc-number">5.</span> <span class="toc-text">相关链接</span></a></li></ol>
+                    </div>
+                </span>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
+        
+    </div>
+</aside>
+
+
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/04/14/rss/" class="archive-article-date">
-  	<time datetime="2019-04-14T10:28:44.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-14</time>
-</a>
-        </div>
-    	 
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/04/14/rss/">什么是 RSS ？</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">技术名词</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
   
 
-    
+  
+
+  
 
 
           </div>
@@ -308,9 +368,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
