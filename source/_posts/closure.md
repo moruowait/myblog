@@ -3,6 +3,7 @@ title: 什么是闭包 ？
 date: 2019-04-24 18:21:44
 toc: true
 tags:
+- Go
 - Javascript
 - 技术名词
 ---
@@ -109,7 +110,7 @@ result(); // 1000
 
 在这段代码中，result 实际上就是闭包 f2 函数。它一共运行了两次，第一次的值是 999，第二次的值是 1000。这证明了，函数 f1 中的局部变量 n 一直保存在内存中，并没有在 f1 调用后被自动清除。
 
-为什么会这样呢？原因就在于 f1 是 f2 的父函数，而 f2 被赋给了一个全局变量，这导致 f2 始终在内存中，而 f2 的存在依赖于 f1，因此 f1 也始终在内存中，不会在调用结束后，被垃圾回收机制（garbage collection）回收。
+为什么会这样呢？原因就在于 f1 是 f2 的父函数，而 f2 被赋给了一个全局变量，这导致 f2 始终在内存中，而 f2 的存在依赖于 f1，因此 f1 也始终在内存中，不会在调用结束后，被垃圾回收机制（garbage collection）回收。`什么时候回收？只有当 f2 销毁的时候才会回收 f1 及 f1 中 定义的各种变量`
 
 这段代码中另一个值得注意的地方，就是"nAdd=function(){n+=1}"这一行，首先在 nAdd 前面没有使用 var 关键字，因此 nAdd 是一个全局变量，而不是局部变量。其次，nAdd 的值是一个匿名函数（anonymous function），而这个匿名函数本身也是一个闭包，所以 nAdd 相当于是一个 setter，可以在函数外部对函数内部的局部变量进行操作。
 
@@ -119,6 +120,95 @@ result(); // 1000
 
 - 闭包会在父函数外部，改变父函数内部变量的值。所以，如果你把父函数当作对象（object）使用，把闭包当作它的公用方法（Public Method），把内部变量当作它的私有属性（private value），这时一定要小心，不要随便改变父函数内部变量的值。
 
+## Golang 并发中的闭包
+
+Go语言的并发时，一定要处理好循环中的闭包引用的外部变量。如下代码：
+
+```go
+func main() {
+    runtime.GOMAXPROCS(runtime.NumCPU())
+    var wg sync.WaitGroup
+    for i := 0; i < 5; i++ {
+        wg.Add(1)
+        go func() {
+            fmt.Print(i)
+            wg.Done()
+        }()
+    }
+    wg.Wait()
+}
+// 输出结果 5 5 5 5 5
+```
+
+这种现象的原因在于闭包共享外部的变量 i，注意到，每次调用 go 就会启动一个 goroutine，这需要一定时间；但是，启动的 goroutine 与循环变量递增不是在同一个 goroutine，可以把 i 认为处于主 goroutine 中。启动一个 goroutine 的速度远小于循环执行的速度，所以即使是第一个 goroutine 刚起启动时，外层的循环也执行到了最后一步了。由于所有的 goroutine 共享 i，而且这个 i 会在最后一个使用它的 goroutine 结束后被销毁，所以最后的输出结果都是最后一步的 i==5。
+
+我们可以使用循环的延时在验证上述说法：
+
+```go
+func main() {
+    runtime.GOMAXPROCS(runtime.NumCPU())
+    var wg sync.WaitGroup
+    for i := 0; i < 5; i++ {
+        wg.Add(1)
+        go func() {
+            fmt.Print(i)
+            wg.Done()
+        }()
+        time.Sleep(1 * time.Second)   // 设置时间延时1秒
+    }
+    wg.Wait()
+}
+// 输出结果 4 0 1 2 3
+```
+
+每一步循环至少间隔一秒，而这一秒的时间足够启动一个 goroutine 了，因此这样可以输出正确的结果。
+
+在实际的工程中，不可能进行延时，这样就没有并发的优势，一般采取下面两种方法：
+
+### 共享的环境变量作为函数参数传递
+
+```go
+func main() {
+    runtime.GOMAXPROCS(runtime.NumCPU())
+
+    var wg sync.WaitGroup
+    for i := 0; i < 5; i++ {
+        wg.Add(1)
+        go func(i int) {
+            fmt.Println(i)
+            wg.Done()
+        }(i)
+    }
+    wg.Wait()
+}
+// 输出结果 4 0 1 2 3
+```
+
+输出结果不一定按照顺序，这取决于每个 goroutine 的实际情况，但是最后的结果是不变的。可以理解为，函数参数的传递是瞬时的，而且是在一个 goroutine 执行之前就完成，所以此时执行的闭包存储了当前i的状态。
+
+### 使用同名的变量保留当前的状态
+
+```go
+func main() {
+    runtime.GOMAXPROCS(runtime.NumCPU())
+
+    var wg sync.WaitGroup
+    for i := 0; i < 5; i++ {
+        wg.Add(1)
+        i := i
+        go func() {
+            fmt.Println(i)
+            wg.Done()
+        }()
+    }
+    wg.Wait()
+}
+// 输出结果 4 0 1 2 3 (结果不一定与传参的方式一致)
+```
+
+同名的变量 i 作为内部的局部变量，覆盖了原来循环中的 i，此时闭包中的变量不再是共享外循环的 i，而是都有各自的内部同名变量 i，赋值过程发生于循环 goroutine，因此保证了独立。
+
 ## 相关链接
 
 - [阮一峰：学习Javascript闭包（Closure）](http://www.ruanyifeng.com/blog/2009/08/learning_javascript_closures.html?20120612141317)
+- [Golang 中闭包的理解](https://blog.csdn.net/qq_35976351/article/details/81986496)

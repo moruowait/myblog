@@ -9,14 +9,14 @@
   <title>什么是闭包 ？ | 莫的主页</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="闭包（closure）是 Javascript 语言的一个难点，也是它的特色，很多高级应用都要依靠闭包实现。 变量作用域要理解闭包，首先要理解 Javascript 特殊的变量作用域。 变量的作用域无非就是两种：全局变量和局部变量。 Javascript 语言的特殊之处，就在于函数内部可以直接读取全局变量。 12345var n = 999;function f1()&amp;#123;    alert">
-<meta name="keywords" content="技术名词,Javascript">
+<meta name="keywords" content="技术名词,Go,Javascript">
 <meta property="og:type" content="article">
 <meta property="og:title" content="什么是闭包 ？">
 <meta property="og:url" content="http://yoursite.com/2019/04/24/closure/index.html">
 <meta property="og:site_name" content="莫的主页">
 <meta property="og:description" content="闭包（closure）是 Javascript 语言的一个难点，也是它的特色，很多高级应用都要依靠闭包实现。 变量作用域要理解闭包，首先要理解 Javascript 特殊的变量作用域。 变量的作用域无非就是两种：全局变量和局部变量。 Javascript 语言的特殊之处，就在于函数内部可以直接读取全局变量。 12345var n = 999;function f1()&amp;#123;    alert">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-04-24T10:42:24.361Z">
+<meta property="og:updated_time" content="2019-04-24T11:53:46.415Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="什么是闭包 ？">
 <meta name="twitter:description" content="闭包（closure）是 Javascript 语言的一个难点，也是它的特色，很多高级应用都要依靠闭包实现。 变量作用域要理解闭包，首先要理解 Javascript 特殊的变量作用域。 变量的作用域无非就是两种：全局变量和局部变量。 Javascript 语言的特殊之处，就在于函数内部可以直接读取全局变量。 12345var n = 999;function f1()&amp;#123;    alert">
@@ -192,7 +192,7 @@
 <h2 id="闭包的用途"><a href="#闭包的用途" class="headerlink" title="闭包的用途"></a>闭包的用途</h2><p><code>闭包可以用在许多地方。它的最大用处有两个，一个是前面提到的可以读取函数内部的变量，另一个就是让这些变量的值始终保持在内存中</code>。</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f1</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">　　<span class="keyword">var</span> n=<span class="number">999</span>;</span><br><span class="line">　　nAdd=<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;n+=<span class="number">1</span>&#125; <span class="comment">// 没有用 var 声明，所以是全局函数</span></span><br><span class="line"></span><br><span class="line">　　<span class="function"><span class="keyword">function</span> <span class="title">f2</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">　　　　alert(n);</span><br><span class="line">　　&#125;</span><br><span class="line">　　<span class="keyword">return</span> f2;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> result=f1();</span><br><span class="line">result(); <span class="comment">// 999</span></span><br><span class="line">nAdd();</span><br><span class="line">result(); <span class="comment">// 1000</span></span><br></pre></td></tr></table></figure>
 <p>在这段代码中，result 实际上就是闭包 f2 函数。它一共运行了两次，第一次的值是 999，第二次的值是 1000。这证明了，函数 f1 中的局部变量 n 一直保存在内存中，并没有在 f1 调用后被自动清除。</p>
-<p>为什么会这样呢？原因就在于 f1 是 f2 的父函数，而 f2 被赋给了一个全局变量，这导致 f2 始终在内存中，而 f2 的存在依赖于 f1，因此 f1 也始终在内存中，不会在调用结束后，被垃圾回收机制（garbage collection）回收。</p>
+<p>为什么会这样呢？原因就在于 f1 是 f2 的父函数，而 f2 被赋给了一个全局变量，这导致 f2 始终在内存中，而 f2 的存在依赖于 f1，因此 f1 也始终在内存中，不会在调用结束后，被垃圾回收机制（garbage collection）回收。<code>什么时候回收？只有当 f2 销毁的时候才会回收 f1 及 f1 中 定义的各种变量</code></p>
 <p>这段代码中另一个值得注意的地方，就是”nAdd=function(){n+=1}”这一行，首先在 nAdd 前面没有使用 var 关键字，因此 nAdd 是一个全局变量，而不是局部变量。其次，nAdd 的值是一个匿名函数（anonymous function），而这个匿名函数本身也是一个闭包，所以 nAdd 相当于是一个 setter，可以在函数外部对函数内部的局部变量进行操作。</p>
 <h2 id="使用闭包的注意点"><a href="#使用闭包的注意点" class="headerlink" title="使用闭包的注意点"></a>使用闭包的注意点</h2><ul>
 <li><p>由于闭包会使得函数中的变量都被保存在内存中，内存消耗很大，所以不能滥用闭包，否则会造成网页的性能问题，在 IE 中可能导致内存泄露。解决方法是，在退出函数之前，将不使用的局部变量全部删除。</p>
@@ -200,8 +200,20 @@
 <li><p>闭包会在父函数外部，改变父函数内部变量的值。所以，如果你把父函数当作对象（object）使用，把闭包当作它的公用方法（Public Method），把内部变量当作它的私有属性（private value），这时一定要小心，不要随便改变父函数内部变量的值。</p>
 </li>
 </ul>
+<h2 id="Golang-并发中的闭包"><a href="#Golang-并发中的闭包" class="headerlink" title="Golang 并发中的闭包"></a>Golang 并发中的闭包</h2><p>Go语言的并发时，一定要处理好循环中的闭包引用的外部变量。如下代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    runtime.GOMAXPROCS(runtime.NumCPU())</span><br><span class="line">    <span class="keyword">var</span> wg sync.WaitGroup</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">5</span>; i++ &#123;</span><br><span class="line">        wg.Add(<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">            fmt.Print(i)</span><br><span class="line">            wg.Done()</span><br><span class="line">        &#125;()</span><br><span class="line">    &#125;</span><br><span class="line">    wg.Wait()</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出结果 5 5 5 5 5</span></span><br></pre></td></tr></table></figure>
+<p>这种现象的原因在于闭包共享外部的变量 i，注意到，每次调用 go 就会启动一个 goroutine，这需要一定时间；但是，启动的 goroutine 与循环变量递增不是在同一个 goroutine，可以把 i 认为处于主 goroutine 中。启动一个 goroutine 的速度远小于循环执行的速度，所以即使是第一个 goroutine 刚起启动时，外层的循环也执行到了最后一步了。由于所有的 goroutine 共享 i，而且这个 i 会在最后一个使用它的 goroutine 结束后被销毁，所以最后的输出结果都是最后一步的 i==5。</p>
+<p>我们可以使用循环的延时在验证上述说法：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    runtime.GOMAXPROCS(runtime.NumCPU())</span><br><span class="line">    <span class="keyword">var</span> wg sync.WaitGroup</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">5</span>; i++ &#123;</span><br><span class="line">        wg.Add(<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">            fmt.Print(i)</span><br><span class="line">            wg.Done()</span><br><span class="line">        &#125;()</span><br><span class="line">        time.Sleep(<span class="number">1</span> * time.Second)   <span class="comment">// 设置时间延时1秒</span></span><br><span class="line">    &#125;</span><br><span class="line">    wg.Wait()</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出结果 4 0 1 2 3</span></span><br></pre></td></tr></table></figure>
+<p>每一步循环至少间隔一秒，而这一秒的时间足够启动一个 goroutine 了，因此这样可以输出正确的结果。</p>
+<p>在实际的工程中，不可能进行延时，这样就没有并发的优势，一般采取下面两种方法：</p>
+<h3 id="共享的环境变量作为函数参数传递"><a href="#共享的环境变量作为函数参数传递" class="headerlink" title="共享的环境变量作为函数参数传递"></a>共享的环境变量作为函数参数传递</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    runtime.GOMAXPROCS(runtime.NumCPU())</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> wg sync.WaitGroup</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">5</span>; i++ &#123;</span><br><span class="line">        wg.Add(<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">(i <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">            fmt.Println(i)</span><br><span class="line">            wg.Done()</span><br><span class="line">        &#125;(i)</span><br><span class="line">    &#125;</span><br><span class="line">    wg.Wait()</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出结果 4 0 1 2 3</span></span><br></pre></td></tr></table></figure>
+<p>输出结果不一定按照顺序，这取决于每个 goroutine 的实际情况，但是最后的结果是不变的。可以理解为，函数参数的传递是瞬时的，而且是在一个 goroutine 执行之前就完成，所以此时执行的闭包存储了当前i的状态。</p>
+<h3 id="使用同名的变量保留当前的状态"><a href="#使用同名的变量保留当前的状态" class="headerlink" title="使用同名的变量保留当前的状态"></a>使用同名的变量保留当前的状态</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    runtime.GOMAXPROCS(runtime.NumCPU())</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> wg sync.WaitGroup</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">5</span>; i++ &#123;</span><br><span class="line">        wg.Add(<span class="number">1</span>)</span><br><span class="line">        i := i</span><br><span class="line">        <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">            fmt.Println(i)</span><br><span class="line">            wg.Done()</span><br><span class="line">        &#125;()</span><br><span class="line">    &#125;</span><br><span class="line">    wg.Wait()</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出结果 4 0 1 2 3 (结果不一定与传参的方式一致)</span></span><br></pre></td></tr></table></figure>
+<p>同名的变量 i 作为内部的局部变量，覆盖了原来循环中的 i，此时闭包中的变量不再是共享外循环的 i，而是都有各自的内部同名变量 i，赋值过程发生于循环 goroutine，因此保证了独立。</p>
 <h2 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h2><ul>
 <li><a href="http://www.ruanyifeng.com/blog/2009/08/learning_javascript_closures.html?20120612141317" target="_blank" rel="noopener">阮一峰：学习Javascript闭包（Closure）</a></li>
+<li><a href="https://blog.csdn.net/qq_35976351/article/details/81986496" target="_blank" rel="noopener">Golang 中闭包的理解</a></li>
 </ul>
 
       
@@ -217,6 +229,10 @@
 			 
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">技术名词</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Go</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
@@ -319,7 +335,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#变量作用域"><span class="toc-number">1.</span> <span class="toc-text">变量作用域</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何从外部读取局部变量？"><span class="toc-number">2.</span> <span class="toc-text">如何从外部读取局部变量？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#闭包的概念"><span class="toc-number">3.</span> <span class="toc-text">闭包的概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#闭包的用途"><span class="toc-number">4.</span> <span class="toc-text">闭包的用途</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用闭包的注意点"><span class="toc-number">5.</span> <span class="toc-text">使用闭包的注意点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#相关链接"><span class="toc-number">6.</span> <span class="toc-text">相关链接</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#变量作用域"><span class="toc-number">1.</span> <span class="toc-text">变量作用域</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何从外部读取局部变量？"><span class="toc-number">2.</span> <span class="toc-text">如何从外部读取局部变量？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#闭包的概念"><span class="toc-number">3.</span> <span class="toc-text">闭包的概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#闭包的用途"><span class="toc-number">4.</span> <span class="toc-text">闭包的用途</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用闭包的注意点"><span class="toc-number">5.</span> <span class="toc-text">使用闭包的注意点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Golang-并发中的闭包"><span class="toc-number">6.</span> <span class="toc-text">Golang 并发中的闭包</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#共享的环境变量作为函数参数传递"><span class="toc-number">6.1.</span> <span class="toc-text">共享的环境变量作为函数参数传递</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用同名的变量保留当前的状态"><span class="toc-number">6.2.</span> <span class="toc-text">使用同名的变量保留当前的状态</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#相关链接"><span class="toc-number">7.</span> <span class="toc-text">相关链接</span></a></li></ol>
                     </div>
                 </span>
             </div>
@@ -439,6 +455,14 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Go</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Javascript</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">PATH</a>
               </li>
              
@@ -447,15 +471,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Go</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Javascript</a>
               </li>
             
             <div class="clearfix"></div>
