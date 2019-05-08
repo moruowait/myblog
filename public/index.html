@@ -57,6 +57,8 @@
 	        
 				<li><a href="/archives">归档</a></li>
 	        
+				<li><a href="/tags/已阅/">已阅</a></li>
+	        
 			</ul>
 		</nav>
 		<nav class="header-smart-menu">
@@ -109,6 +111,8 @@
 			
 				
 			
+				
+			
 			
 			
 			<nav class="header-nav">
@@ -124,12 +128,14 @@
 			</nav>
 
 			<nav class="header-menu js-header-menu">
-				<ul style="width: 50%">
+				<ul style="width: 70%">
 				
 				
-					<li style="width: 50%"><a href="/">主页</a></li>
+					<li style="width: 33.333333333333336%"><a href="/">主页</a></li>
 		        
-					<li style="width: 50%"><a href="/archives">归档</a></li>
+					<li style="width: 33.333333333333336%"><a href="/archives">归档</a></li>
+		        
+					<li style="width: 33.333333333333336%"><a href="/tags/已阅/">已阅</a></li>
 		        
 				</ul>
 			</nav>
@@ -145,6 +151,176 @@
           </div>
           <div id="js-content" class="content-ll">
             
+  
+    <article id="post-grpc" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/04/30/grpc/">gRPC 详解</a>
+    </h1>
+  
+
+        
+        <a href="/2019/04/30/grpc/" class="archive-article-date">
+  	<time datetime="2019-04-30T10:21:44.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-30</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="什么是-gRPC？"><a href="#什么是-gRPC？" class="headerlink" title="什么是 gRPC？"></a>什么是 gRPC？</h2><h3 id="指南"><a href="#指南" class="headerlink" title="指南"></a>指南</h3><p>这篇文档向你介绍了什么是 gRPC 和 protocol buffers。gRPC 可以使用 protocol buffers 作为其接口定义语言（IDL）和底层消息交换格式。如果你是 gRPC 和 protocol buffers 新手，那么读这篇文档可以帮助到你，如果你只是想看看 gRPC 是怎么运作的，直接看<a href="https://grpc.io/docs/quickstart/" target="_blank" rel="noopener">快速开始</a>。</p>
+<h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>在 gRPC 中，Client 应用程序可以直接调用不同机器上的 Server 应用程序上的方法，就像它是一个本地对象一样，这使您更容易创建分布式应用程序和服务。与许多 RPC 系统一样，gRPC 基于定义服务的思想，指定可以使用参数和返回类型远程调用的方法。在 Server 端， Server 实现此接口并运行 gRPC 服务器来处理Client 调用。在Client 端，Client 有一个 Stub (在某些语言中称为 Client)，它提供与 Server 相同的方法。</p>
+
+<p>gRPC clients 和 servers 可以在各种环境中运行并相互通信 - 从 Google 中的服务器到你自己的桌面 - 并且可以用 gPRC 支持的任何语言编写。因此，例如，你可以使用 Java 轻松地创建一个 gRPC server，clints 端使用 GO、Python 或者 Ruby。除此之外，最新的 Google APIs 将具有接口的 gRPC 版本，让你可以轻松地将 Google 功能构建到应用程序中去。</p>
+<h3 id="使用-Protocol-Buffers"><a href="#使用-Protocol-Buffers" class="headerlink" title="使用 Protocol Buffers"></a>使用 Protocol Buffers</h3><p>gRPC 默认使用 <a href="https://developers.google.com/protocol-buffers/docs/overview" target="_blank" rel="noopener">protocol buffers</a>，用于序列化结构化数据的成熟开源机制（尽管它可以与其他数据格式，如：JSON 一起使用）。这是一个如何工作的快速介绍。如果你已经熟悉 protocol buffers，可以随时跳到下一部分。</p>
+<p>使用 protocol buffers 的第一步是定义要在 proto 文件中序列化的数据的结构：这是一个带 .proto 扩展名的普通文本文件。 protocol buffers 数据被构造为消息，其中每个消息是包含一系列称为字段的 name-value 对的信息的小逻辑记录。这是一个简单的例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">message Person &#123;</span><br><span class="line">  string name = 1;</span><br><span class="line">  int32 id = 2;</span><br><span class="line">  bool has_ponycopter = 3;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后，一旦指定了数据结构，就可以使用 protocol buffers 编译器 <code>protoc</code> 从原型定义生成首选语言的数据访问类。这些为每个字段（如 <code>name()</code> 和 <code>set_name()</code>）提供了简单的访问器，以及将整个结构序列化/解析为原始字节的方法 - 例如，如果您选择的语言是 C++，则在上面的示例中运行编译器将生成上课了 <code>Person</code>。然后，您可以在应用程序中使用此类来填充，序列化和检索 Person protocol buffers 消息。</p>
+<p>正如您将在我们的示例中更详细地看到的那样，您可以在普通的 proto 文件中定义 gRPC 服务，并将 RPC 方法参数和返回类型指定为 protocol buffers 消息：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">// The greeter service definition.</span><br><span class="line">service Greeter &#123;</span><br><span class="line">  // Sends a greeting</span><br><span class="line">  rpc SayHello (HelloRequest) returns (HelloReply) &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// The request message containing the user&apos;s name.</span><br><span class="line">message HelloRequest &#123;</span><br><span class="line">  string name = 1;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// The response message containing the greetings</span><br><span class="line">message HelloReply &#123;</span><br><span class="line">  string message = 1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>gRPC 还使用 protoc 特殊的 gRPC 插件从 proto 文件生成代码。但是，使用 gRPC 插件，您将获得生成的 gRPC 客户端和服务器代码，以及用于填充，序列化和检索消息类型的常规 protocol buffers 代码。我们将在下面更详细地看一下这个例子。</p>
+<p>你可以在 <a href="https://developers.google.com/protocol-buffers/docs/overview" target="_blank" rel="noopener">Protocol Buffers 文档中</a> 找到有关 protocol buffers 的更多信息，并了解如何使用 gRPC 插件快速获取和安装 protoc。</p>
+<h3 id="Protocol-Buffers-版本"><a href="#Protocol-Buffers-版本" class="headerlink" title="Protocol Buffers 版本"></a>Protocol Buffers 版本</h3><p>虽然 protocol buffers 已经供开源用户使用了一段时间，但我们的实例使用了一种新的 protocol buffers 协议，称作 proto3，它具有略微简化的语法，一些有用的新功能并支持更多的语言。目前支持 Java、C++、Python、Object-C、C#、a little-runtime（Android Java）、Ruby、和 JavaScript，这些来自 <a href="https://github.com/protocolbuffers/protobuf/releases" target="_blank" rel="noopener">protocol buffers GitHub Repo</a>。也支持来自 <a href="https://github.com/golang/protobuf" target="_blank" rel="noopener">golang/protobuf GitHub repo</a> 的 Go 语言生成器，还有更多的语言正在开发中。你可以在 <a href="https://developers.google.com/protocol-buffers/docs/proto3" target="_blank" rel="noopener">proto3 语言指南</a>和每种语言的<a href="https://developers.google.com/protocol-buffers/docs/reference/overview" target="_blank" rel="noopener">参考文档</a>中找到更多信息。参考文档还包括 .proto 文件格式的<a href="https://developers.google.com/protocol-buffers/docs/reference/proto3-spec" target="_blank" rel="noopener">正式的规范</a>。</p>
+<p>通常情况下，虽然你可以使用 proto2（当前的默认版本），但我们建议你将 proto3 和 gRPC 一起使用，因为它允许你使用全系列的 gRPC 支持的语言，以避免与 proto2 client 与 proto3 server 通信的兼容性问题，反之亦然。</p>
+<h2 id="gRPC-概念"><a href="#gRPC-概念" class="headerlink" title="gRPC 概念"></a>gRPC 概念</h2><p>本文档介绍了一些关键的 gRPC 概念，概述了 gRPC 的体系结构和 RPC 生命周期。</p>
+<h3 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h3><h4 id="服务定义"><a href="#服务定义" class="headerlink" title="服务定义"></a>服务定义</h4><p>与许多 RPC 系统一样，gRPC 基于定义服务的思想，指定可以使用其参数和返回类型远程调用的方法。默认情况下，gRPC 使用 protocol buffers 作为接口定义语言（IDL）来描述服务接口和有效负载消息的结构。如果需要，可以使用其他替代方案。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">service HelloService &#123;</span><br><span class="line">  rpc SayHello (HelloRequest) returns (HelloResponse);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">message HelloRequest &#123;</span><br><span class="line">  string greeting = 1;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">message HelloResponse &#123;</span><br><span class="line">  string reply = 1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">技术名词</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/04/30/grpc/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-read" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/04/25/read/">阅读列表</a>
+    </h1>
+  
+
+        
+        <a href="/2019/04/25/read/" class="archive-article-date">
+  	<time datetime="2019-04-25T08:56:10.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-25</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本文记录一些已经阅读过的知识点列表，需要整理的会整理到博客中，不需要整理的在本列表体现。</p>
+<h3 id="一、算法"><a href="#一、算法" class="headerlink" title="一、算法"></a>一、算法</h3><ul>
+<li><a href="https://www.geekshuai.com/posts/14aa896.html" target="_blank" rel="noopener">10 分钟带你了解一致性 hash 算法</a> </li>
+</ul>
+<h3 id="二、计算机网络"><a href="#二、计算机网络" class="headerlink" title="二、计算机网络"></a>二、计算机网络</h3><ul>
+<li><a href="https://www.geekshuai.com/posts/fb1665c6.html" target="_blank" rel="noopener">访问网站 DNS 相关的流程</a></li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">已阅</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/04/25/read/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
   
     <article id="post-closure" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
@@ -762,6 +938,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">MAC</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">已阅</a>
               </li>
              
               <li class="article-tag-list-item">
