@@ -26,7 +26,7 @@ gRPC 默认使用 [protocol buffers](https://developers.google.com/protocol-buff
 
 使用 protocol buffers 的第一步是定义要在 proto 文件中序列化的数据的结构：这是一个带 .proto 扩展名的普通文本文件。 protocol buffers 数据被构造为消息，其中每个消息是包含一系列称为字段的 name-value 对的信息的小逻辑记录。这是一个简单的例子：
 
-```proto
+```go
 message Person {
   string name = 1;
   int32 id = 2;
@@ -38,7 +38,7 @@ message Person {
 
 正如您将在我们的示例中更详细地看到的那样，您可以在普通的 proto 文件中定义 gRPC 服务，并将 RPC 方法参数和返回类型指定为 protocol buffers 消息：
 
-```proto
+```go
 // The greeter service definition.
 service Greeter {
   // Sends a greeting
@@ -76,7 +76,7 @@ gRPC 还使用 protoc 特殊的 gRPC 插件从 proto 文件生成代码。但是
 
 与许多 RPC 系统一样，gRPC 基于定义服务的思想，指定可以使用其参数和返回类型远程调用的方法。默认情况下，gRPC 使用 protocol buffers 作为接口定义语言（IDL）来描述服务接口和有效负载消息的结构。如果需要，可以使用其他替代方案。
 
-```proto
+```go
 service HelloService {
   rpc SayHello (HelloRequest) returns (HelloResponse);
 }
@@ -89,3 +89,49 @@ message HelloResponse {
   string reply = 1;
 }
 ```
+
+gRPC 允许你定义四种服务方法：
+
+- 一元 RPCs（Unary RPCs），客户端向服务器发送单个请求并返回单个响应，就像正常的函数调用一样。
+
+```go
+rpc SayHello(HelloRequest) returns (HelloResponse){
+}
+```
+
+服务器流式 RPC（Server streaming RPCs），客户端向服务器发送请求并获取流以读取消息序列。客户端从返回的流中读取，直到没有更多消息。gRPC 保证单个 RPC 调用中的消息排序。
+
+```go
+rpc LotsOfReplies(HelloRequest) returns (stream HelloResponse){
+}
+```
+
+客户端流式 RPC（Client streaming RPCs），客户端再次使用提供的流写入一系列消息并将其发送到服务器。一旦客户端写完消息，它就等待服务器读取它们并返回它的响应。gRPC 再次保证在单个 RPC 调用中的消息排序。
+
+```go
+rpc LotsOfGreetings(stream HelloRequest) returns (HelloResponse) {
+}
+```
+
+双向流式 RPC（Bidirectional streaming RPCs），双方使用读写流发送一系列消息。这两个流独立运行，因此客户端和服务器可以按照自己喜欢的顺序进行读写：例如，服务器可以在写入响应之前等待接收所有客户端消息，或者它可以交替地读取消息然后写入消息，或者其他一些读写组合。保留每个流中的消息顺序。
+
+```go
+rpc BidiHello(stream HelloRequest) returns (stream HelloResponse){
+}
+```
+
+我们将在下面的 RPC 生命周期部分中更详细地介绍不同类型的RPC。
+
+#### 使用 API
+
+从 .proto 文件中的服务定义开始，gRPC 提供了生成客户端和服务器端代码的 protocol buffer 编译器插件。gRPC 用户通常在客户端调用这些 API，并在服务器端实现相应的 API。
+
+- 在服务器端，服务器实现服务声明的方法，并运行 gRPC 服务器来处理客户端调用。gRPC 基础结构解码传入请求，执行服务方法并对服务响应进行编码
+- 在客户端，客户端有一个称为存根的本地对象（stub）（对于某些语言，首选术语是 client），它实现与服务相同的方法。然后，客户端可以在本地对象上调用这些方法，将调用的参数包装在适当的 protocol buffer 消息类型中 - gRPC在将请求发送到服务器并返回服务器的 protocol buffer 响应之后查看。
+
+#### 同步 vs 异步
+
+在响应从服务器到达之前阻塞的同步 RPC 调用最接近 RPC 所期望的过程调用的抽象。另一方面，网络本质上是异步的，在许多情况下，能够在不阻塞当前线程的情况下启动 RPC 非常有用。
+
+大多数语言的 gRPC 编程表面都有同步和异步两种版本。您可以在每种语言的教程和参考文档中找到更多信息（完整的参考文档即将推出）。
+
