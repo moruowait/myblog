@@ -135,3 +135,112 @@ rpc BidiHello(stream HelloRequest) returns (stream HelloResponse){
 
 大多数语言的 gRPC 编程表面都有同步和异步两种版本。您可以在每种语言的教程和参考文档中找到更多信息（完整的参考文档即将推出）。
 
+### PRC 生命周期
+
+现在让我们仔细看看当 gRPC 客户端调用 gRPC 服务器方法时会发生什么。我们不会查看实现细节，您可以在我们特定语言的页面中找到有关这些内容的更多信息。
+
+#### Unary RPC
+
+首先让我们看一下最简单的 RPC 类型，客户端发送单个请求并返回单个响应。
+
+- 客户端在 stub/client 对象上调用方法后，将通知服务器已使用客户端带着metedata （metadata）调用了产生了一次调用，方法名称和指定的截止时间（如果适用）调用RPC 。
+
+- 然后，服务器可以立即发送回自己的初始metedata （必须在任何响应之前发送），或者等待客户端的请求消息 - 首先发生的是特定于应用程序的消息。
+
+- 一旦服务器具有客户端的请求消息，它就会执行创建和填充其响应所需的任何工作。然后将响应与状态详细信息（状态代码和可选状态消息）以及可选的尾随metedata 一起返回（如果成功）到客户端。
+
+- 如果状态为 OK，则客户端获取响应，从而完成客户端的调用。
+
+#### Server streaming RPC
+
+服务器流 RPC 类似于我们的简单示例，除了服务器在获取客户端的请求消息后发回响应流。在发回所有响应之后，服务器的状态详细信息（状态代码和可选状态消息）和可选的尾随metedata 将被发送回服务器端完成。一旦客户端拥有所有服务器的响应，客户端就会完成。
+
+#### Client streaming RPC
+
+客户端流式 RPC 也类似于我们的简单示例，除了客户端向服务器发送请求流而不是单个请求。服务器发送回单个响应，通常但不一定在收到所有客户端请求后，以及其状态详细信息和可选的尾随metedata 。
+
+#### Bidirectional streaming RPC
+
+在双向流式 RPC 中，再次调用由客户端发起的调用并且服务器端接收客户端的metedata 、方法名称和截止日期。服务器再次可以选择发回其初始metedata 或等待客户端开始发送请求。
+
+接下来会发生什么取决于应用程序，因为客户端和服务器可以按任何顺序读写 - 流完全独立地运行。因此，例如，服务器可以等到它收到所有客户端的消息之后再写入其响应，或者服务器和客户端可以“乒乓”：服务器获取请求，然后发回响应，然后客户端发送另一个基于响应的请求，等等。
+
+#### 截止日期/超时
+
+gRPC 允许客户端指定在 RPC 因错误而终止之前，他们愿意等待 RPC 完成的时间 DEADLINE_EXCEEDED。在服务器端，服务器可以查询特定 RPC 是否已超时，或者剩余多少时间来完成 RPC。
+
+指定截止日期或超时的方式因语言而异 - 例如，并非所有语言都有默认截止日期，某些语言 API 在截止日期（固定时间点）工作，某些语言 API 在超时方面工作（持续时间）。
+
+#### RPC 终止
+
+在 gRPC 中，客户端和服务器都对呼叫的成功进行独立和本地的确定，并且它们的结论可能不匹配。这意味着，例如，您可以在服务器端成功完成 RPC（“我已经发送了所有响应！”），但在客户端失败（“我的截止日期后响应已到达！”）。在客户端发送所有请求之前，服务器也可以决定完成。
+
+#### 取消 RPC
+
+客户端或服务器可以随时取消 RPC。取消立即终止 RPC，以便不再进行进一步的工作。它不是 “撤消”：取消之前所做的更改将不会被回滚。
+
+#### metedata
+
+metedata 是以键值对列表形式的特定 RPC 调用（例如[身份验证详细信息](#身份验证)）的信息，其中键是字符串，值通常是字符串（但可以是二进制数据）。metedata 对 gRPC 本身是不透明的 - 它允许客户端提供与服务器调用相关的信息，反之亦然。
+
+对 metedata 的访问取决于语言。
+
+#### 通道（channels）
+
+gRPC channel 提供与指定主机和端口上的 gRPC 服务器的连接，并在创建客户端 stub（或某些语言中的 “client”）时使用。客户端可以指定 channel 参数来修改gRPC 的默认行为，例如打开和关闭消息压缩。一个 channel 是有状态的，包括 `connected` 和 `idle`。
+
+gRPC 如何处理关闭 channels 与语言有关。某些语言还允许查询 channels 状态。
+
+## 身份验证
+
+### 认证
+
+本文档概述了 gRPC 身份验证，包括我们内置的支持身份验证机制，如何插入您自己的身份验证系统，以及如何在我们支持的语言中使用 gRPC 身份验证的示例。
+
+### 总览
+
+gRPC 旨在与各种身份验证机制配合使用，可以轻松安全地使用 gRPC 与其他系统进行通信。您可以使用我们支持的机制 - 带或不带基于 Google 令牌的身份验证的 SSL / TLS - 或者您可以通过扩展我们提供的代码来插入您自己的身份验证系统。
+
+gRPC 还提供了一个简单的身份验证 API，可让您 `Credentials` 在创建 channel 或调用时提供所有必要的身份验证信息。
+
+### 支持的身份验证机制
+
+gRPC 内置了以下身份验证机制：
+
+- SSL / TLS：gRPC具有SSL / TLS集成，并促进使用SSL / TLS对服务器进行身份验证，并加密客户端和服务器之间交换的所有数据。可选机制可供客户端提供相互身份验证的证书。
+
+- 使用 Google 进行基于令牌的身份验证：gRPC 提供了一种通用机制如（下所述），用于将基于 metedata 的凭据附加到请求和响应。某些身份验证流程提供了在通过 gRPC 访问 Google API 时获取访问令牌（通常是 OAuth2 令牌）的额外支持：您可以在下面的代码示例中看到它的工作原理。通常，必须使用此机制以及通道上的 SSL / TLS - Google 不允许没有 SSL / TLS 的连接，并且大多数 gRPC 语言实现都不允许您在未加密的通道上发送凭据。
+
+警告：Google 凭据只能用于连接 Google 服务。将 Google 发布的 OAuth2 令牌发送到非 Google 服务可能会导致此令牌被盗并用于冒充客户端到 Google 服务。
+
+### 身份验证 API
+
+gRPC 提供了一个基于 Credentials 对象统一概念的简单身份验证 API，可以在创建整个 gRPC channel 或单个 call 时使用。
+
+#### 凭证类型
+
+凭证可以有两种类型：
+
+- Channel credentials，附加到 `Channel`，例如 SSL 凭据。
+- Call credentials，附加到 call（或者 C++ 中的 `ClientContext`）。
+
+您还可以将这些组合在一起成为 `CompositeChannelCredentials`，例如，您可以指定 channel 的 SSL 详细信息以及在 channel 上进行的每个 call 的凭据。一个 `CompositeChannelCredentials` 将 `ChannelCredentials` 和 `CallCredentials` 连接到一起，创建一个新的 `ChannelCredentials`。结果将 `CallCredentials` 通过在 channel 上进行的每次调用发送与组合相关的认证数据。
+
+例如，从 `SslCredentials` 和`AccessTokenCredentials` 你可以创建一个 `ChannelCredentials`。应用于 a 的结果 `Channel` 将为此通道上的每个调用发送相应的访问令牌。
+
+单独的 `CallCredentials` 也可以使用 `CompositeCallCredentials`。`CallCredentials` 在调用中使用时产生的结果将触发发送与两者相关联的认证数据。
+
+#### 使用客户端 SSL/TLS
+
+现在让我们看一下如何 Credentials 使用我们支持的 auth 机制之一。这是最简单的身份验证方案，客户端只想验证服务器并加密所有数据。该示例使用的是 C ++，但所有语言的 API 都类似：您可以在下面的示例部分中看到如何在更多语言中启用SSL / TLS。
+
+```go
+// Create a default SSL ChannelCredentials object.
+auto channel_creds = grpc::SslCredentials(grpc::SslCredentialsOptions());
+// Create a channel using the credentials created in the previous step.
+auto channel = grpc::CreateChannel(server_name, channel_creds);
+// Create a stub on the channel.
+std::unique_ptr<Greeter::Stub> stub(Greeter::NewStub(channel));
+// Make actual RPC calls on the stub.
+grpc::Status s = stub->sayHello(&context, *request, response);
+```
