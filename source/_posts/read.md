@@ -19,3 +19,7 @@ tags:
 ### 三、Go 语言源码解析
 
 - [深度解密 Go 语言之 map](https://www.cnblogs.com/qcrao-2018/p/10903807.html)
+
+### 四、Go 面试
+
+- [Go 中的方法接收器](https://mp.weixin.qq.com/s/US7MnIJfekJRazioxyWQhg)
