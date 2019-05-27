@@ -23,3 +23,5 @@ tags:
 ### 四、Go 语言相关解析
 
 - [Go 中的方法接收器](https://mp.weixin.qq.com/s/US7MnIJfekJRazioxyWQhg)
+
+- [Go 变量分配到栈还是堆？](https://www.cnblogs.com/qcrao-2018/p/10453260.html)
