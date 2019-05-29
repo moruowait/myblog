@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="莫的主页">
 <meta property="og:description" content="背景使用 append 可以在 slice 之后追加元素，例如 123a := []int&amp;#123;1,2,3&amp;#125;result := append(a,4)fmt.Println(result) // output: [1 2 3 4] 问题在于，进行这种操作时，原来的 slice（即 a）所基于的数组值会不会发生变化？在 Golang 中，如果有多个 slice 基于同一个数组，则这些">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-05-29T04:13:17.338Z">
+<meta property="og:updated_time" content="2019-05-29T08:30:48.103Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Golang slice 之 append 时原数组发生变化">
 <meta name="twitter:description" content="背景使用 append 可以在 slice 之后追加元素，例如 123a := []int&amp;#123;1,2,3&amp;#125;result := append(a,4)fmt.Println(result) // output: [1 2 3 4] 问题在于，进行这种操作时，原来的 slice（即 a）所基于的数组值会不会发生变化？在 Golang 中，如果有多个 slice 基于同一个数组，则这些">
@@ -197,7 +197,7 @@
 </ul>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    a := []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;</span><br><span class="line">    fmt.Printf(<span class="string">"len(a): %d, cap(a): %d \n"</span>, <span class="built_in">len</span>(a), <span class="built_in">cap</span>(a)) <span class="comment">// len(a): 5, cap(a): 5</span></span><br><span class="line"></span><br><span class="line">    b := a[:<span class="number">3</span>]</span><br><span class="line">    fmt.Printf(<span class="string">"len(b): %d, cap(b): %d \n"</span>, <span class="built_in">len</span>(b), <span class="built_in">cap</span>(b)) <span class="comment">// len(b): 3, cap(b): 5</span></span><br><span class="line"></span><br><span class="line">    c := a[:<span class="number">3</span>:<span class="number">3</span>]</span><br><span class="line">    fmt.Printf(<span class="string">"len(c): %d, cap(c): %d \n"</span>, <span class="built_in">len</span>(c), <span class="built_in">cap</span>(c)) <span class="comment">// len(c): 3, cap(c): 3</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>从输出结果可以看出，使用三参数方式时，截取后的 slice 的 cap 将会重新设置。如果第二个参数和第三个参数相同，那么截取后的 slice 的 len == cap，这样在执行 append 的时候一定会重新分配数组，从而保证原始的数组 a 不会发生改变。</p>
-<p>PS: 三参数表达式：a[start : end : cap]</p>
+<p>PS: 三参数表达式：b := a[start : end : capEnd]，len(b) = end - start, cap(b) = capEnd - start</p>
 <ul>
 <li>同样的分析一下数组作为参数传递所发生的事情：</li>
 </ul>
@@ -426,10 +426,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Javascript</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">技术名词</a>
               </li>
              
@@ -455,6 +451,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Javascript</a>
               </li>
             
             <div class="clearfix"></div>
