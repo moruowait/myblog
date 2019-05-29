@@ -78,7 +78,7 @@ func main() {
 
 从输出结果可以看出，使用三参数方式时，截取后的 slice 的 cap 将会重新设置。如果第二个参数和第三个参数相同，那么截取后的 slice 的 len == cap，这样在执行 append 的时候一定会重新分配数组，从而保证原始的数组 a 不会发生改变。
 
-PS: 三参数表达式：a[start : end : cap]
+PS: 三参数表达式：b := a[start : end : capEnd]，len(b) = end - start, cap(b) = capEnd - start
 
 - 同样的分析一下数组作为参数传递所发生的事情：
 
