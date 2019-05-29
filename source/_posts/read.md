@@ -10,11 +10,11 @@ tags:
 
 ### 一、算法
 
-- [10 分钟带你了解一致性 hash 算法](https://www.geekshuai.com/posts/14aa896.html) 
+- [10 分钟带你了解一致性 hash 算法](https://geekshuai.github.io/posts/14aa896.html)
 
 ### 二、计算机网络
 
-- [访问网站 DNS 相关的流程](https://www.geekshuai.com/posts/fb1665c6.html)
+- [访问网站 DNS 相关的流程](https://geekshuai.github.io/posts/fb1665c6.html)
 
 ### 三、Go 语言源码解析
 
