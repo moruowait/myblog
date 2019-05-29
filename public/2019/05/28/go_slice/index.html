@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="莫的主页">
 <meta property="og:description" content="背景使用 append 可以在 slice 之后追加元素，例如 123a := []int&amp;#123;1,2,3&amp;#125;result := append(a,4)fmt.Println(result) // output: [1 2 3 4] 问题在于，进行这种操作时，原来的 slice（即 a）所基于的数组值会不会发生变化？在 Golang 中，如果有多个 slice 基于同一个数组，则这些">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-05-29T04:05:22.375Z">
+<meta property="og:updated_time" content="2019-05-29T04:13:17.338Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Golang slice 之 append 时原数组发生变化">
 <meta name="twitter:description" content="背景使用 append 可以在 slice 之后追加元素，例如 123a := []int&amp;#123;1,2,3&amp;#125;result := append(a,4)fmt.Println(result) // output: [1 2 3 4] 问题在于，进行这种操作时，原来的 slice（即 a）所基于的数组值会不会发生变化？在 Golang 中，如果有多个 slice 基于同一个数组，则这些">
@@ -178,6 +178,7 @@
         <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>使用 append 可以在 slice 之后追加元素，例如</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">a := []<span class="keyword">int</span>&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>&#125;</span><br><span class="line">result := <span class="built_in">append</span>(a,<span class="number">4</span>)</span><br><span class="line">fmt.Println(result) <span class="comment">// output: [1 2 3 4]</span></span><br></pre></td></tr></table></figure>
 <p>问题在于，进行这种操作时，原来的 slice（即 a）所基于的数组值会不会发生变化？在 Golang 中，如果有多个 slice 基于同一个数组，则这些 slice 的数据是共享的（而不是每个 slice 复制一份，复制的是指针）。也就说，如果改变了数组的内容，则基于它的所有 slice 的值都会发生变化。这段代码中 a 的值没有发生变化，是有原因的。</p>
+<a id="more"></a>
 <h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>回答这个问题，首先需要了解 append 函数的实现原理：</p>
 <ul>
 <li>如果 a 的 cap 够用，则会直接在 a 指向的数组后面追加元素，返回的 slice 和原来的 slice 是同一个对象。显然，这种情况下原来的 slice 值发生了变化！</li>
@@ -421,6 +422,14 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Go</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Javascript</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">技术名词</a>
               </li>
              
@@ -430,14 +439,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Log</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Go</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Javascript</a>
               </li>
              
               <li class="article-tag-list-item">
