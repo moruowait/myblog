@@ -24,4 +24,8 @@ tags:
 
 - [Go 中的方法接收器](https://mp.weixin.qq.com/s/US7MnIJfekJRazioxyWQhg)
 
-- [Go 变量分配到栈还是堆？](https://www.cnblogs.com/qcrao-2018/p/10453260.html)
+- [Go 逃逸分析之变量分配到栈还是堆？](https://www.cnblogs.com/qcrao-2018/p/10453260.html)
+
+- [Go 深度解密 Slice](https://www.cnblogs.com/qcrao-2018/p/10631989.html)
+
+- [Go 深度解密 interface 的 10 个问题](https://www.cnblogs.com/qcrao-2018/p/10766091.html)
