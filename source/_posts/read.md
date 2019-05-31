@@ -31,3 +31,5 @@ tags:
 ### 四、Go 语言相关解析
 
 - [Go 中的方法接收器](https://mp.weixin.qq.com/s/US7MnIJfekJRazioxyWQhg)
+
+- [Go Slice 与 Map 效率解析](https://studygolang.com/articles/11799)
