@@ -33,3 +33,5 @@ tags:
 - [Go 中的方法接收器](https://mp.weixin.qq.com/s/US7MnIJfekJRazioxyWQhg)
 
 - [Go Slice 与 Map 效率解析](https://studygolang.com/articles/11799)
+
+- [Go 如何优雅关闭 Channel](https://studygolang.com/articles/20786)
