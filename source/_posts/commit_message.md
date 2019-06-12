@@ -6,8 +6,6 @@ tags:
 - 技术名词
 ---
 
-# 怎么写 Commit Message?
-
 Commit Message 是告诉其他人你在提交中完成了哪些操作的最简单方法。通过阅读 Commit Message，您应该能够在不查看提交的情况下说出更改的范围和更改背后的一般思想。
 
 ## Commit Message
