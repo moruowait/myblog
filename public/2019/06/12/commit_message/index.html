@@ -6,20 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Golang slice 之 append 时原数组发生变化 | 莫的主页</title>
+  <title>怎么写 Commit Message？ | 莫的主页</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="背景使用 append 可以在 slice 之后追加元素，例如 123a := []int&amp;#123;1,2,3&amp;#125;result := append(a,4)fmt.Println(result) // output: [1 2 3 4] 问题在于，进行这种操作时，原来的 slice（即 a）所基于的数组值会不会发生变化？在 Golang 中，如果有多个 slice 基于同一个数组，则这些">
-<meta name="keywords" content="Go">
+  <meta name="description" content="怎么写 Commit Message?Commit Message 是告诉其他人你在提交中完成了哪些操作的最简单方法。通过阅读 Commit Message，您应该能够在不查看提交的情况下说出更改的范围和更改背后的一般思想。 Commit Message一条好的 Commit Message 应该包含以下部分。 标题这是一个单行摘要，它应该帮助其他人快速浏览列表并找到他们想要的 commit。 这">
+<meta name="keywords" content="技术名词">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Golang slice 之 append 时原数组发生变化">
-<meta property="og:url" content="http://yoursite.com/2019/05/28/go_slice/index.html">
+<meta property="og:title" content="怎么写 Commit Message？">
+<meta property="og:url" content="http://yoursite.com/2019/06/12/commit_message/index.html">
 <meta property="og:site_name" content="莫的主页">
-<meta property="og:description" content="背景使用 append 可以在 slice 之后追加元素，例如 123a := []int&amp;#123;1,2,3&amp;#125;result := append(a,4)fmt.Println(result) // output: [1 2 3 4] 问题在于，进行这种操作时，原来的 slice（即 a）所基于的数组值会不会发生变化？在 Golang 中，如果有多个 slice 基于同一个数组，则这些">
+<meta property="og:description" content="怎么写 Commit Message?Commit Message 是告诉其他人你在提交中完成了哪些操作的最简单方法。通过阅读 Commit Message，您应该能够在不查看提交的情况下说出更改的范围和更改背后的一般思想。 Commit Message一条好的 Commit Message 应该包含以下部分。 标题这是一个单行摘要，它应该帮助其他人快速浏览列表并找到他们想要的 commit。 这">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-05-29T08:30:48.103Z">
+<meta property="og:updated_time" content="2019-06-12T07:36:00.534Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Golang slice 之 append 时原数组发生变化">
-<meta name="twitter:description" content="背景使用 append 可以在 slice 之后追加元素，例如 123a := []int&amp;#123;1,2,3&amp;#125;result := append(a,4)fmt.Println(result) // output: [1 2 3 4] 问题在于，进行这种操作时，原来的 slice（即 a）所基于的数组值会不会发生变化？在 Golang 中，如果有多个 slice 基于同一个数组，则这些">
+<meta name="twitter:title" content="怎么写 Commit Message？">
+<meta name="twitter:description" content="怎么写 Commit Message?Commit Message 是告诉其他人你在提交中完成了哪些操作的最简单方法。通过阅读 Commit Message，您应该能够在不查看提交的情况下说出更改的范围和更改背后的一般思想。 Commit Message一条好的 Commit Message 应该包含以下部分。 标题这是一个单行摘要，它应该帮助其他人快速浏览列表并找到他们想要的 commit。 这">
   
     <link rel="alternative" href="/atom.xml" title="莫的主页" type="application/atom+xml">
   
@@ -155,53 +155,44 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-go_slice" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-commit_message" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      Golang slice 之 append 时原数组发生变化
+      怎么写 Commit Message？
     </h1>
   
 
         
-        <a href="/2019/05/28/go_slice/" class="archive-article-date">
-  	<time datetime="2019-05-28T11:22:34.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-28</time>
+        <a href="/2019/06/12/commit_message/" class="archive-article-date">
+  	<time datetime="2019-06-12T12:21:44.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-06-12</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>使用 append 可以在 slice 之后追加元素，例如</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">a := []<span class="keyword">int</span>&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>&#125;</span><br><span class="line">result := <span class="built_in">append</span>(a,<span class="number">4</span>)</span><br><span class="line">fmt.Println(result) <span class="comment">// output: [1 2 3 4]</span></span><br></pre></td></tr></table></figure>
-<p>问题在于，进行这种操作时，原来的 slice（即 a）所基于的数组值会不会发生变化？在 Golang 中，如果有多个 slice 基于同一个数组，则这些 slice 的数据是共享的（而不是每个 slice 复制一份，复制的是指针）。也就说，如果改变了数组的内容，则基于它的所有 slice 的值都会发生变化。这段代码中 a 的值没有发生变化，是有原因的。</p>
+        <h1 id="怎么写-Commit-Message"><a href="#怎么写-Commit-Message" class="headerlink" title="怎么写 Commit Message?"></a>怎么写 Commit Message?</h1><p>Commit Message 是告诉其他人你在提交中完成了哪些操作的最简单方法。通过阅读 Commit Message，您应该能够在不查看提交的情况下说出更改的范围和更改背后的一般思想。</p>
+<h2 id="Commit-Message"><a href="#Commit-Message" class="headerlink" title="Commit Message"></a>Commit Message</h2><p>一条好的 Commit Message 应该包含以下部分。</p>
+<h3 id="标题"><a href="#标题" class="headerlink" title="标题"></a>标题</h3><p>这是一个单行摘要，它应该帮助其他人快速浏览列表并找到他们想要的 commit。</p>
+<p>这一行不应该超过 80 个字符，因为这是 Commit Message 中惟一保证在所有工具中都能看到的部分，而 Commit Message 的其余部分很可能是隐藏的。例如，“git log”、“git blame” 和 BitBucket commit 视图只显示这一行。</p>
 <a id="more"></a>
-<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>回答这个问题，首先需要了解 append 函数的实现原理：</p>
+<h3 id="为什么进行这些更改"><a href="#为什么进行这些更改" class="headerlink" title="为什么进行这些更改?"></a>为什么进行这些更改?</h3><p>本节应详细说明正在进行的更改。它至少应该包括变更的范围、要解决的问题和变更的期望。</p>
+<p>In practice,</p>
 <ul>
-<li>如果 a 的 cap 够用，则会直接在 a 指向的数组后面追加元素，返回的 slice 和原来的 slice 是同一个对象。显然，这种情况下原来的 slice 值发生了变化！</li>
-<li>如果 a 的 cap 不够用（上述代码就是这种情况），则会重新分配一个数组空间来存储数据，并且返回指向新数组的 slice。这时候原来的 a 指向的数组并没有发生任何变化！（后面讲给出例子）</li>
-<li>当然，在任何情况下，append 返回的结果都是追加后的 slice，这一点没有问题。</li>
+<li>bullet</li>
+<li>points</li>
+<li>are</li>
+<li>preferred</li>
 </ul>
-<p>以下代码用来验证这个问题：</p>
-<ol>
-<li>在函数 <code>test1</code> 中 a 的值发生变化了，因为 a[:2] 的 len=2，cap=3，所以追加一个元素时，cap 依然够用</li>
-<li>在函数 <code>test2</code> 中 a 的值没有发生变化，因为 a[:2] 的 cap 不够用，因此会重新分配一个数组用来存储新的数据，而 a 存储的仍然是老数组</li>
-</ol>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">test1</span><span class="params">()</span></span> &#123;</span><br><span class="line">    a := []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</span><br><span class="line">    fmt.Printf(<span class="string">"&amp;a:[%p], a:[%p], &amp;a[0]:[%p], a:%v, len(a): %d, cap(a): %d \n"</span>, &amp;a, a, &amp;a[<span class="number">0</span>], a, <span class="built_in">len</span>(a), <span class="built_in">cap</span>(a))</span><br><span class="line">    <span class="comment">// &amp;a:[0xc0000be0e0], a:[0xc0000a0140], &amp;a[0]:[0xc0000a0140], a:[1 2 3], len(a): 3, cap(a): 3</span></span><br><span class="line">    a = <span class="built_in">append</span>(a[:<span class="number">2</span>], <span class="number">4</span>)</span><br><span class="line">    fmt.Printf(<span class="string">"&amp;a:[%p], a:[%p], &amp;a[0]:[%p], a:%v, len(a): %d, cap(a): %d \n"</span>, &amp;a, a, &amp;a[<span class="number">0</span>], a, <span class="built_in">len</span>(a), <span class="built_in">cap</span>(a))</span><br><span class="line">    <span class="comment">// &amp;a:[0xc0000be0e0], a:[0xc0000a0140], &amp;a[0]:[0xc0000a0140], a:[1 2 4], len(a): 3, cap(a): 3</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 指向 a 的指针没有发生变化，数组 a 的地址没有发生变化，是因为 cap 够用，不需要扩容</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">test2</span><span class="params">()</span></span> &#123;</span><br><span class="line">    a := []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</span><br><span class="line">    fmt.Printf(<span class="string">"&amp;a:[%p], a:[%p], &amp;a[0]:[%p], a:%v, len(a): %d, cap(a): %d \n"</span>, &amp;a, a, &amp;a[<span class="number">0</span>], a, <span class="built_in">len</span>(a), <span class="built_in">cap</span>(a))</span><br><span class="line">    <span class="comment">// &amp;a:[0xc0000b80e0], a:[0xc00009a140], &amp;a[0]:[0xc00009a140], a:[1 2 3], len(a): 3, cap(a): 3</span></span><br><span class="line">    c := <span class="built_in">append</span>(a[:<span class="number">2</span>], []<span class="keyword">int</span>&#123;<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;...)</span><br><span class="line">    fmt.Printf(<span class="string">"&amp;a:[%p], a:[%p], &amp;a[0]:[%p], a:%v, len(a): %d, cap(a): %d \n"</span>, &amp;a, a, &amp;a[<span class="number">0</span>], a, <span class="built_in">len</span>(a), <span class="built_in">cap</span>(a))</span><br><span class="line">    <span class="comment">// &amp;a:[0xc0000b80e0], a:[0xc00009a140], &amp;a[0]:[0xc00009a140], a:[1 2 3], len(a): 3, cap(a): 3</span></span><br><span class="line">    fmt.Printf(<span class="string">"&amp;c:[%p], c:[%p], &amp;c[0]:[%p], c:%v, len(c): %d, cap(c): %d \n"</span>, &amp;c, c, &amp;c[<span class="number">0</span>], c, <span class="built_in">len</span>(c), <span class="built_in">cap</span>(c))</span><br><span class="line">    <span class="comment">// &amp;c:[0xc0000b8140], c:[0xc0000f8000], &amp;c[0]:[0xc0000f8000], c:[1 2 4 5 6], len(c): 5, cap(c): 6</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// a 没有发生改变，因为 cap 不够用，发生了扩容，重新分配了一个数组来 append 元素，原有的 a 仍然执行原数组，而 append 返回了新分配的数组</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>为了避开这个“坑“，推荐在截取 slice 时使用三参数的方式：</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    a := []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;</span><br><span class="line">    fmt.Printf(<span class="string">"len(a): %d, cap(a): %d \n"</span>, <span class="built_in">len</span>(a), <span class="built_in">cap</span>(a)) <span class="comment">// len(a): 5, cap(a): 5</span></span><br><span class="line"></span><br><span class="line">    b := a[:<span class="number">3</span>]</span><br><span class="line">    fmt.Printf(<span class="string">"len(b): %d, cap(b): %d \n"</span>, <span class="built_in">len</span>(b), <span class="built_in">cap</span>(b)) <span class="comment">// len(b): 3, cap(b): 5</span></span><br><span class="line"></span><br><span class="line">    c := a[:<span class="number">3</span>:<span class="number">3</span>]</span><br><span class="line">    fmt.Printf(<span class="string">"len(c): %d, cap(c): %d \n"</span>, <span class="built_in">len</span>(c), <span class="built_in">cap</span>(c)) <span class="comment">// len(c): 3, cap(c): 3</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>从输出结果可以看出，使用三参数方式时，截取后的 slice 的 cap 将会重新设置。如果第二个参数和第三个参数相同，那么截取后的 slice 的 len == cap，这样在执行 append 的时候一定会重新分配数组，从而保证原始的数组 a 不会发生改变。</p>
-<p>PS: 三参数表达式：b := a[start : end : capEnd]，len(b) = end - start, cap(b) = capEnd - start</p>
-<ul>
-<li>同样的分析一下数组作为参数传递所发生的事情：</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> s = []<span class="keyword">string</span>&#123;<span class="string">"1"</span>, <span class="string">"2"</span>, <span class="string">"3"</span>&#125;</span><br><span class="line"></span><br><span class="line">    fmt.Printf(<span class="string">"&amp;s:[%p], s:[%p], &amp;s[0]:[%p], s:%v, len(a): %d, cap(a): %d \n"</span>, &amp;s, s, &amp;s[<span class="number">0</span>], s, <span class="built_in">len</span>(s), <span class="built_in">cap</span>(s))</span><br><span class="line">    <span class="comment">// &amp;s:[0xc0000ba0e0], s:[0xc00008e450], &amp;s[0]:[0xc00008e450], s:[1 2 3], len(a): 3, cap(a): 3</span></span><br><span class="line">    <span class="comment">// here we call t as s[:2]</span></span><br><span class="line">    fmt.Printf(<span class="string">"&amp;s:[%p], t:[%p], &amp;t[0]:[%p], t:%v, len(s): %d, cap(s): %d \n"</span>, &amp;s, s[:<span class="number">2</span>], &amp;s[:<span class="number">2</span>][<span class="number">0</span>], s[:<span class="number">2</span>], <span class="built_in">len</span>(s[:<span class="number">2</span>]), <span class="built_in">cap</span>(s[:<span class="number">2</span>]))</span><br><span class="line">    <span class="comment">// &amp;s:[0xc0000ba0e0], t:[0xc00008e450], &amp;t[0]:[0xc00008e450], t:[1 2], len(s): 2, cap(s): 3</span></span><br><span class="line">    test(s[:<span class="number">2</span>]...)</span><br><span class="line">    fmt.Printf(<span class="string">"&amp;s:[%p], s:[%p], &amp;s[0]:[%p], s:%v, len(a): %d, cap(a): %d \n"</span>, &amp;s, s, &amp;s[<span class="number">0</span>], s, <span class="built_in">len</span>(s), <span class="built_in">cap</span>(s))</span><br><span class="line">    <span class="comment">// &amp;s:[0xc0000ba0e0], s:[0xc00008e450], &amp;s[0]:[0xc00008e450], s:[1 2 3], len(a): 3, cap(a): 3</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">test</span><span class="params">(a ...<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">    fmt.Printf(<span class="string">"&amp;a:[%p], a:[%p], &amp;a[0]:[%p], a:%v, len(a): %d, cap(a): %d \n"</span>, &amp;a, a, &amp;a[<span class="number">0</span>], a, <span class="built_in">len</span>(a), <span class="built_in">cap</span>(a)) <span class="comment">// 说明复制了一个指针，指向了数组</span></span><br><span class="line">    <span class="comment">// &amp;a:[0xc0000fa000], a:[0xc00008e450], &amp;a[0]:[0xc00008e450], a:[1 2], len(a): 2, cap(a): 3</span></span><br><span class="line">    <span class="comment">// here we call t as a[:len(a):len(a)]</span></span><br><span class="line">    fmt.Printf(<span class="string">"&amp;a:[%p], t:[%p], &amp;t[0]:[%p], t:%v, len(a): %d, cap(a): %d \n"</span>, &amp;a, a[:<span class="built_in">len</span>(a):<span class="built_in">len</span>(a)], &amp;a[:<span class="built_in">len</span>(a):<span class="built_in">len</span>(a)][<span class="number">0</span>], a[:<span class="built_in">len</span>(a):<span class="built_in">len</span>(a)], <span class="built_in">len</span>(a[:<span class="built_in">len</span>(a):<span class="built_in">len</span>(a)]), <span class="built_in">cap</span>(a[:<span class="built_in">len</span>(a):<span class="built_in">len</span>(a)]))</span><br><span class="line">    <span class="comment">// &amp;a:[0xc0000fa000], t:[0xc00008e450], &amp;t[0]:[0xc00008e450], t:[1 2], len(a): 2, cap(a): 2</span></span><br><span class="line">    a = <span class="built_in">append</span>(a[:<span class="built_in">len</span>(a):<span class="built_in">len</span>(a)], <span class="string">"4"</span>)</span><br><span class="line">    fmt.Printf(<span class="string">"&amp;a:[%p], a:[%p], &amp;a[0]:[%p], a:%v, len(a): %d, cap(a): %d \n"</span>, &amp;a, a, &amp;a[<span class="number">0</span>], a, <span class="built_in">len</span>(a), <span class="built_in">cap</span>(a))</span><br><span class="line">    <span class="comment">// 数组第一个元素的指针发生了改变，指向数组的指针没有改变，说明数组扩容重新分配了数组地址</span></span><br><span class="line">    <span class="comment">// &amp;a:[0xc0000fa000], a:[0xc000100000], &amp;a[0]:[0xc000100000], a:[1 2 4], len(a): 3, cap(a): 4</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Metadata"><a href="#Metadata" class="headerlink" title="Metadata"></a>Metadata</h3><p>Metadata 意味着被自动化系统读取(例如：Bitbucket、Bamboo 等)。虽然它们不打算被人们使用，但它们应该是可读的，并且易于输入。</p>
+<p>例如，我们使用 <code>LABEL=value[，value]*</code> 来组织这些元数据。</p>
+<p>最常用的标签是 <code>BUG= BUG-id</code>。</p>
+<h4 id="BUG"><a href="#BUG" class="headerlink" title="BUG"></a>BUG</h4><p>将这个 commit 和 JIRA 或者其他 BUG 追踪平台的 Issue 联系起来。</p>
+<h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">xxxxxx: Implement PrintHelloWorld method</span><br><span class="line"></span><br><span class="line">- add output for method `PrintHelloWorld`</span><br><span class="line">- rename `hiWorld` to `helloWord`</span><br><span class="line"></span><br><span class="line">BUG=XXXX-45</span><br></pre></td></tr></table></figure>
 
       
 
@@ -215,7 +206,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Go</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">技术名词</a>
         		</li>
       		
 		</ul>
@@ -271,7 +262,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2019/05/28/go_slice/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2019/06/12/commit_message/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -285,18 +276,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2019/06/12/commit_message/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          怎么写 Commit Message？
-        
-      </div>
-    </a>
   
-  
-    <a href="/2019/04/30/grpc/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">gRPC 详解</div>
+    <a href="/2019/05/28/go_slice/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Golang slice 之 append 时原数组发生变化</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -323,7 +305,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#背景"><span class="toc-number">1.</span> <span class="toc-text">背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分析"><span class="toc-number">2.</span> <span class="toc-text">分析</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#怎么写-Commit-Message"><span class="toc-number">1.</span> <span class="toc-text">怎么写 Commit Message?</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Commit-Message"><span class="toc-number">1.1.</span> <span class="toc-text">Commit Message</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#标题"><span class="toc-number">1.1.1.</span> <span class="toc-text">标题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#为什么进行这些更改"><span class="toc-number">1.1.2.</span> <span class="toc-text">为什么进行这些更改?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Metadata"><span class="toc-number">1.1.3.</span> <span class="toc-text">Metadata</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#BUG"><span class="toc-number">1.1.3.1.</span> <span class="toc-text">BUG</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#示例"><span class="toc-number">1.2.</span> <span class="toc-text">示例</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
