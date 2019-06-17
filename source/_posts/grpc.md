@@ -12,6 +12,8 @@ tags:
 
 这篇文档向你介绍了什么是 gRPC 和 protocol buffers。gRPC 可以使用 protocol buffers 作为其接口定义语言（IDL）和底层消息交换格式。如果你是 gRPC 和 protocol buffers 新手，那么读这篇文档可以帮助到你，如果你只是想看看 gRPC 是怎么运作的，直接看[快速开始](https://grpc.io/docs/quickstart/)。
 
+<!-- more -->
+
 ### 概述
 
 在 gRPC 中，Client 应用程序可以直接调用不同机器上的 Server 应用程序上的方法，就像它是一个本地对象一样，这使您更容易创建分布式应用程序和服务。与许多 RPC 系统一样，gRPC 基于定义服务的思想，指定可以使用参数和返回类型远程调用的方法。在 Server 端， Server 实现此接口并运行 gRPC 服务器来处理Client 调用。在Client 端，Client 有一个 Stub (在某些语言中称为 Client)，它提供与 Server 相同的方法。
@@ -234,7 +236,7 @@ gRPC 提供了一个基于 Credentials 对象统一概念的简单身份验证 A
 
 现在让我们看一下如何 Credentials 使用我们支持的 auth 机制之一。这是最简单的身份验证方案，客户端只想验证服务器并加密所有数据。该示例使用的是 C ++，但所有语言的 API 都类似：您可以在下面的示例部分中看到如何在更多语言中启用SSL / TLS。
 
-```go
+```c++
 // Create a default SSL ChannelCredentials object.
 auto channel_creds = grpc::SslCredentials(grpc::SslCredentialsOptions());
 // Create a channel using the credentials created in the previous step.
@@ -243,4 +245,402 @@ auto channel = grpc::CreateChannel(server_name, channel_creds);
 std::unique_ptr<Greeter::Stub> stub(Greeter::NewStub(channel));
 // Make actual RPC calls on the stub.
 grpc::Status s = stub->sayHello(&context, *request, response);
+```
+
+对于高级用例，例如修改根 CA 或者使用客户端证书，可以在 `SslCredentialsOptions` 传递给工厂方法的参数中设置相应的选项。
+
+使用基于 Google 令牌的身份验证
+
+gRPC 应用程序可以使用简单的 API 创建凭据，该凭据可用于在各种部署方案中与 Google 进行身份验证。同样，我们的示例是在 C++ 中，但你可以在我们的示例部分找到其他语言的示例。
+
+```c++
+auto creds = grpc::GoogleDefaultCredentials();
+// Create a channel, stub and make RPC calls (same as in the previous example)
+auto channel = grpc::CreateChannel(server_name, creds);
+std::unique_ptr<Greeter::Stub> stub(Greeter::NewStub(channel));
+grpc::Status s = stub->sayHello(&context, *request, response);
+```
+
+这个通道凭据对象适用于服务账户里的应用程序以及在 [Google Compute Engine（GCE）中](https://cloud.google.com/compute/)运行的应用程序。在前一种情况下，服务账户的私钥是从环境变量中指定的文件加载的 `GOOGLE_APPLICATION_CREDENTIALS`。秘钥用于生成附加到相应信道上的每个传出 RPC 的承载令牌。
+
+对于在 GCE 中运行的应用程序，可以在 VM 设置期间配置默认服务账户和相应的 OAuth2 范围。在运行时，此凭据处理与身份验证系统的通信以获取 OAuth2 访问令牌，并将它们附加到相应通道上每个传出 RPC。
+
+#### 扩展 gRPC 以支持其他身份验证机制
+
+Credentials 插件 API 允许开发人员插入它们自己的凭据类型。这包括：
+
+- `MetadataCredentialsPlugin` 抽象类，其中包含纯虚 `GetMetadata` 需要由开发者创建的子类来实现的方法。
+
+- `MetadataCredentialsFromPlugin` 函数，它从 `MetadataCredentialsPlugin` 创建了一个 `CallCredentials`。
+
+下面是一个简单的凭证插件的例子，它在自定义头中设置了一个身份验证票据。
+
+```c++
+class MyCustomAuthenticator : public grpc::MetadataCredentialsPlugin {
+ public:
+  MyCustomAuthenticator(const grpc::string& ticket) : ticket_(ticket) {}
+
+  grpc::Status GetMetadata(
+      grpc::string_ref service_url, grpc::string_ref method_name,
+      const grpc::AuthContext& channel_auth_context,
+      std::multimap<grpc::string, grpc::string>* metadata) override {
+    metadata->insert(std::make_pair("x-custom-auth-ticket", ticket_));
+    return grpc::Status::OK;
+  }
+
+ private:
+  grpc::string ticket_;
+};
+
+auto call_creds = grpc::MetadataCredentialsFromPlugin(
+    std::unique_ptr<grpc::MetadataCredentialsPlugin>(
+        new MyCustomAuthenticator("super-secret-ticket")));
+```
+
+通过在核心级插入 gRPC 凭证实现，可以实现更深入的集成。gRPC 内部还允许使用其他加密机制切换 SSL/TLS。
+
+### 例子
+
+这些认证机制将在所有 gRPC 支持的语言中可用。下面几节将演示上述身份验证和授权特性如何出现在每种语言中:很快就会有更多的语言出现。
+
+#### Go
+
+基本情况 - 没有加密或者身份验证
+
+Client:
+
+```go
+conn, _ := grpc.Dial("localhost:50051", grpc.WithInsecure())
+// error handling omitted
+client := pb.NewGreeterClient(conn)
+// ...
+```
+
+Server:
+
+```go
+s := grpc.NewServer()
+lis, _ := net.Listen("tcp", "localhost:50051")
+// error handling omitted
+s.Serve(lis)
+```
+
+使用服务器身份验证 SSL/TLS
+
+Client:
+
+```go
+creds, _ := credentials.NewClientTLSFromFile(certFile, "")
+conn, _ := grpc.Dial("localhost:50051", grpc.WithTransportCredentials(creds))
+// error handling omitted
+client := pb.NewGreeterClient(conn)
+// ...
+```
+
+Server:
+
+```go
+creds, _ := credentials.NewServerTLSFromFile(certFile, keyFile)
+s := grpc.NewServer(grpc.Creds(creds))
+lis, _ := net.Listen("tcp", "localhost:50051")
+// error handling omitted
+s.Serve(lis)
+```
+
+通过 Google 验证
+
+```go
+pool, _ := x509.SystemCertPool()
+// error handling omitted
+creds := credentials.NewClientTLSFromCert(pool, "")
+perRPC, _ := oauth.NewServiceAccountFromFile("service-account.json", scope)
+conn, _ := grpc.Dial(
+	"greeter.googleapis.com",
+	grpc.WithTransportCredentials(creds),
+	grpc.WithPerRPCCredentials(perRPC),
+)
+// error handling omitted
+client := pb.NewGreeterClient(conn)
+// ...
+```
+
+#### Ruby
+
+基本情况 - 没有加密或者身份验证
+
+```ruby
+stub = Helloworld::Greeter::Stub.new('localhost:50051', :this_channel_is_insecure)
+...
+```
+
+使用服务器身份验证 SSL/TLS
+
+```ruby
+creds = GRPC::Core::Credentials.new(load_certs)  # load_certs typically loads a CA roots file
+stub = Helloworld::Greeter::Stub.new('myservice.example.com', creds)
+```
+
+通过 Google 验证
+
+```ruby
+require 'googleauth'  # from http://www.rubydoc.info/gems/googleauth/0.1.0
+...
+ssl_creds = GRPC::Core::ChannelCredentials.new(load_certs)  # load_certs typically loads a CA roots file
+authentication = Google::Auth.get_application_default()
+call_creds = GRPC::Core::CallCredentials.new(authentication.updater_proc)
+combined_creds = ssl_creds.compose(call_creds)
+stub = Helloworld::Greeter::Stub.new('greeter.googleapis.com', combined_creds)
+```
+
+#### C++
+
+基本情况 - 没有加密或者身份验证
+
+```c++
+auto channel = grpc::CreateChannel("localhost:50051", InsecureChannelCredentials());
+std::unique_ptr<Greeter::Stub> stub(Greeter::NewStub(channel));
+...
+```
+
+使用服务器身份验证 SSL/TLS
+
+```c++
+auto channel_creds = grpc::SslCredentials(grpc::SslCredentialsOptions());
+auto channel = grpc::CreateChannel("myservice.example.com", channel_creds);
+std::unique_ptr<Greeter::Stub> stub(Greeter::NewStub(channel));
+...
+```
+
+通过 Google 验证
+
+```c++
+auto creds = grpc::GoogleDefaultCredentials();
+auto channel = grpc::CreateChannel("greeter.googleapis.com", creds);
+std::unique_ptr<Greeter::Stub> stub(Greeter::NewStub(channel));
+...
+```
+
+#### C#
+
+基本情况 - 没有加密或者身份验证
+
+```c#
+var channel = new Channel("localhost:50051", ChannelCredentials.Insecure);
+var client = new Greeter.GreeterClient(channel);
+...
+```
+
+使用服务器身份验证 SSL/TLS
+
+```c#
+var channelCredentials = new SslCredentials(File.ReadAllText("roots.pem"));  // Load a custom roots file.
+var channel = new Channel("myservice.example.com", channelCredentials);
+var client = new Greeter.GreeterClient(channel);
+
+```
+
+通过 Google 验证
+
+```c#
+using Grpc.Auth;  // from Grpc.Auth NuGet package
+...
+// Loads Google Application Default Credentials with publicly trusted roots.
+var channelCredentials = await GoogleGrpcCredentials.GetApplicationDefaultAsync();
+
+var channel = new Channel("greeter.googleapis.com", channelCredentials);
+var client = new Greeter.GreeterClient(channel);
+...
+```
+
+验证单个 RPC 调用
+
+```c#
+var channel = new Channel("greeter.googleapis.com", new SslCredentials());  // Use publicly trusted roots.
+var client = new Greeter.GreeterClient(channel);
+...
+var googleCredential = await GoogleCredential.GetApplicationDefaultAsync();
+var result = client.SayHello(request, new CallOptions(credentials: googleCredential.ToCallCredentials()));
+...
+```
+
+#### Python
+
+基本情况 - 没有加密或者身份验证
+
+```python
+import grpc
+import helloworld_pb2
+
+channel = grpc.insecure_channel('localhost:50051')
+stub = helloworld_pb2.GreeterStub(channel)
+```
+
+使用服务器身份验证 SSL/TLS
+
+Client:
+
+```python
+import grpc
+import helloworld_pb2
+
+with open('roots.pem', 'rb') as f:
+    creds = grpc.ssl_channel_credentials(f.read())
+channel = grpc.secure_channel('myservice.example.com:443', creds)
+stub = helloworld_pb2.GreeterStub(channel)
+```
+
+Server:
+
+```python
+import grpc
+import helloworld_pb2
+from concurrent import futures
+
+server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+with open('key.pem', 'rb') as f:
+    private_key = f.read()
+with open('chain.pem', 'rb') as f:
+    certificate_chain = f.read()
+server_credentials = grpc.ssl_server_credentials( ( (private_key, certificate_chain), ) )
+# Adding GreeterServicer to server omitted
+server.add_secure_port('myservice.example.com:443', server_credentials)
+server.start()
+# Server sleep omitted
+```
+
+使用 JWT 与 Google 进行身份验证
+
+```python
+import grpc
+import helloworld_pb2
+
+from google import auth as google_auth
+from google.auth import jwt as google_auth_jwt
+from google.auth.transport import grpc as google_auth_transport_grpc
+
+credentials, _ = google_auth.default()
+jwt_creds = google_auth_jwt.OnDemandCredentials.from_signing_credentials(
+    credentials)
+channel = google_auth_transport_grpc.secure_authorized_channel(
+    jwt_creds, None, 'greeter.googleapis.com:443')
+stub = helloworld_pb2.GreeterStub(channel)
+```
+
+使用 Oauth2 令牌通过 Google 进行身份验证
+
+```python
+import grpc
+import helloworld_pb2
+
+from google import auth as google_auth
+from google.auth.transport import grpc as google_auth_transport_grpc
+from google.auth.transport import requests as google_auth_transport_requests
+
+credentials, _ = google_auth.default(scopes=(scope,))
+request = google_auth_transport_requests.Request()
+channel = google_auth_transport_grpc.secure_authorized_channel(
+    credentials, request, 'greeter.googleapis.com:443')
+stub = helloworld_pb2.GreeterStub(channel)
+```
+
+#### Java
+
+基本情况 - 没有加密或者身份验证
+
+```java
+ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50051)
+    .usePlaintext(true)
+    .build();
+GreeterGrpc.GreeterStub stub = GreeterGrpc.newStub(channel);
+```
+
+使用服务器身份验证 SSL/TLS
+
+在 Java 中，我们建议你在 TLS 上使用 gRPC 时使用 OpenSSL。您可以在 gRPC Java [安全文档](https://github.com/grpc/grpc-java/blob/master/SECURITY.md#transport-security-tls)中找到关于安装和使用 OpenSSL 以及 Android 和非 Android Java 所需的其他库的详细信息。
+
+要在服务器上启用 TLS，需要以 PEM 格式指定证书链和私钥。这样的私钥不应该使用密码。链中的证书顺序很重要：更具体地说，顶部的证书必须是主机 CA，而最底部的证书必须是根 CA. 标准 TLS 端口是 443，但我们使用下面的8443 以避免需要操作系统的额外权限。
+
+```java
+Server server = ServerBuilder.forPort(8443)
+    // Enable TLS
+    .useTransportSecurity(certChainFile, privateKeyFile)
+    .addService(TestServiceGrpc.bindService(serviceImplementation))
+    .build();
+server.start();
+```
+
+如果客户端不知道颁发证书的权限，则应分别正确配置 `SslContext` 或 `SSLSocketFactory` 提供给  `NettyChannelBuilder` 或 `OkHttpChannelBuilder`。
+
+在客户端，使用 SSL/TLS 的服务器身份验证如下所示：
+
+```java
+// With server authentication SSL/TLS
+ManagedChannel channel = ManagedChannelBuilder.forAddress("myservice.example.com", 443)
+    .build();
+GreeterGrpc.GreeterStub stub = GreeterGrpc.newStub(channel);
+
+// With server authentication SSL/TLS; custom CA root certificates; not on Android
+ManagedChannel channel = NettyChannelBuilder.forAddress("myservice.example.com", 443)
+    .sslContext(GrpcSslContexts.forClient().trustManager(new File("roots.pem")).build())
+    .build();
+GreeterGrpc.GreeterStub stub = GreeterGrpc.newStub(channel);
+```
+
+通过 Google 验证
+
+以下代码段显示了如何使用带有服务帐户的 gRPC 调用 [Google Cloud PubSub API](https://cloud.google.com/pubsub/docs/overview)。凭据从存储在众所周知的位置的密钥加载，或者通过检测应用程序在可以自动提供应用程序的环境中运行，例如 Google Compute Engine。虽然此示例特定于 Google 及其服务，但其他服务提供商可以遵循类似的模式。
+
+```java
+GoogleCredentials creds = GoogleCredentials.getApplicationDefault();
+ManagedChannel channel = ManagedChannelBuilder.forTarget("greeter.googleapis.com")
+    .build();
+GreeterGrpc.GreeterStub stub = GreeterGrpc.newStub(channel)
+    .withCallCredentials(MoreCallCredentials.from(creds));
+```
+
+#### Node.js
+
+基本情况 - 没有加密或者身份验证
+
+```javascript
+var stub = new helloworld.Greeter('localhost:50051', grpc.credentials.createInsecure());
+```
+
+使用服务器身份验证 SSL/TLS
+
+```javascript
+var ssl_creds = grpc.credentials.createSsl(root_certs);
+var stub = new helloworld.Greeter('myservice.example.com', ssl_creds);
+```
+
+通过 Google 验证
+
+```javascript
+// Authenticating with Google
+var GoogleAuth = require('google-auth-library'); // from https://www.npmjs.com/package/google-auth-library
+...
+var ssl_creds = grpc.credentials.createSsl(root_certs);
+(new GoogleAuth()).getApplicationDefault(function(err, auth) {
+  var call_creds = grpc.credentials.createFromGoogleCredential(auth);
+  var combined_creds = grpc.credentials.combineChannelCredentials(ssl_creds, call_creds);
+  var stub = new helloworld.Greeter('greeter.googleapis.com', combined_credentials);
+});
+```
+
+使用 Oauth2 令牌使用 Google 进行身份验证（传统方法）
+
+```javascript
+var GoogleAuth = require('google-auth-library'); // from https://www.npmjs.com/package/google-auth-library
+...
+var ssl_creds = grpc.Credentials.createSsl(root_certs); // load_certs typically loads a CA roots file
+var scope = 'https://www.googleapis.com/auth/grpc-testing';
+(new GoogleAuth()).getApplicationDefault(function(err, auth) {
+  if (auth.createScopeRequired()) {
+    auth = auth.createScoped(scope);
+  }
+  var call_creds = grpc.credentials.createFromGoogleCredential(auth);
+  var combined_creds = grpc.credentials.combineChannelCredentials(ssl_creds, call_creds);
+  var stub = new helloworld.Greeter('greeter.googleapis.com', combined_credentials);
+});
+
 ```
