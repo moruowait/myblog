@@ -644,3 +644,224 @@ var scope = 'https://www.googleapis.com/auth/grpc-testing';
 });
 
 ```
+
+#### PHP
+
+基本情况 - 没有加密或者身份验证
+
+```php
+$client = new helloworld\GreeterClient('localhost:50051', [
+    'credentials' => Grpc\ChannelCredentials::createInsecure(),
+]);
+...
+```
+
+通过 Google 验证
+
+```php
+function updateAuthMetadataCallback($context)
+{
+    $auth_credentials = ApplicationDefaultCredentials::getCredentials();
+    return $auth_credentials->updateMetadata($metadata = [], $context->service_url);
+}
+$channel_credentials = Grpc\ChannelCredentials::createComposite(
+    Grpc\ChannelCredentials::createSsl(file_get_contents('roots.pem')),
+    Grpc\CallCredentials::createFromPlugin('updateAuthMetadataCallback')
+);
+$opts = [
+  'credentials' => $channel_credentials
+];
+$client = new helloworld\GreeterClient('greeter.googleapis.com', $opts);
+```
+
+使用 Oauth2 令牌使用 Google 进行身份验证（传统方法）
+
+```php
+// the environment variable "GOOGLE_APPLICATION_CREDENTIALS" needs to be set
+$scope = "https://www.googleapis.com/auth/grpc-testing";
+$auth = Google\Auth\ApplicationDefaultCredentials::getCredentials($scope);
+$opts = [
+  'credentials' => Grpc\Credentials::createSsl(file_get_contents('roots.pem'));
+  'update_metadata' => $auth->getUpdateMetadataFunc(),
+];
+$client = new helloworld\GreeterClient('greeter.googleapis.com', $opts);
+```
+
+#### Dart
+
+基本情况 - 没有加密或者身份验证
+
+```dart
+final channel = new ClientChannel('localhost',
+      port: 50051,
+      options: const ChannelOptions(
+          credentials: const ChannelCredentials.insecure()));
+final stub = new GreeterClient(channel);
+```
+
+使用服务器身份验证 SSL/TLS
+
+```dart
+// Load a custom roots file.
+final trustedRoot = new File('roots.pem').readAsBytesSync();
+final channelCredentials =
+    new ChannelCredentials.secure(certificates: trustedRoot);
+final channelOptions = new ChannelOptions(credentials: channelCredentials);
+final channel = new ClientChannel('myservice.example.com',
+    options: channelOptions);
+final client = new GreeterClient(channel);
+```
+
+通过 Google 验证
+
+```dart
+// Uses publicly trusted roots by default.
+final channel = new ClientChannel('greeter.googleapis.com');
+final serviceAccountJson =
+     new File('service-account.json').readAsStringSync();
+final credentials = new JwtServiceAccountAuthenticator(serviceAccountJson);
+final client =
+    new GreeterClient(channel, options: credentials.toCallOptions);
+```
+
+验证单个 RPC 调用
+
+```dart
+// Uses publicly trusted roots by default.
+final channel = new ClientChannel('greeter.googleapis.com');
+final client = new GreeterClient(channel);
+...
+final serviceAccountJson =
+     new File('service-account.json').readAsStringSync();
+final credentials = new JwtServiceAccountAuthenticator(serviceAccountJson);
+final response =
+    await client.sayHello(request, options: credentials.toCallOptions);
+```
+
+## 错误处理和调试
+
+### 错误处理
+
+此页面描述了gRPC如何处理错误，包括gRPC的内置错误代码。可以在[此处](https://github.com/avinassh/grpc-errors)找到不同语言的示例代码。
+
+### 标准错误模型
+
+正如您在我们的概念文档和示例中所看到的，当 gRPC 调用成功完成时，服务器会向客户端返回一个 OK 状态（取决于语言，OK 可能会或可能不会直接在您的代码中使用）。但如果调用不成功会怎样？
+
+如果发生错误，gRPC 会返回其错误状态代码之一，并带有可选的字符串错误消息，该消息提供有关所发生情况的更多详细信息。所有支持的语言中的 gRPC 客户端都可以使用错误信息。
+
+### 更丰富的错误模型
+
+上述错误模型是官方 gRPC 错误模型，受所有 gRPC 客户端/服务器库支持，并且独立于 gRPC 数据格式（无论是 protocol buffers 或者其他内容）。你可能已经注意到它非常有限，并且不包括传达错误详细信息的能力。
+
+如果你在使用 protoco buffers 的数据格式，你不妨考虑使用开发和这里所描述的由谷歌所使用的更丰富的[错误模型](https://cloud.google.com/apis/design/errors#error_model)。这个模型使服务器返回并且客户端能够使用表示为一个或多个 protobuf 消息的错误详细信息。它进一步制定了一组[标准的错误消息类型](https://github.com/googleapis/googleapis/blob/master/google/rpc/error_details.proto)，以满足最常见的需求（例如无效参数，配额违规和堆栈跟踪）。此额外错误信息的 protobuf 二进制编码在响应中作为尾随元数据提供。
+
+这个更丰富的错误模型已经在 C++，Go，Java，Python 和 Ruby 库中得到支持，并且至少 grpc-web 和 Nodes.js 库存在请求支持它的 issue。如果有需求，其他语言库可能会在将来添加支持，因此如果感兴趣，请检查他们的 github 存储库。但请注意，用 C 语言编写的 grpc-core 库不太可能支持它，因为它是有目的的数据格式不可知的。
+
+如果你没有使用 protocol buffers，你可以使用类似的方法（在尾随相应元数据中放置错误详细信息），但你可能需要查找或开发用于访问此数据的库支持，以便在你的实际 API 中使用它。
+
+在决定是否使用这种扩展错误模型时，需要注意一些重要的注意事项，包括：
+
+- 在错误细节有效载荷的要求和期望方面，扩展错误模型的库实现可能在语言之间不一致
+- 现有代理，记录器和其他标准 HTTP 请求处理器无法查看错误详细信息，因此无法将其用于监视或其他目的
+- 追踪者中的其他错误详细信息会干扰线头阻塞，并且由于更频繁的缓存未命中而会降低 HTTP/2 报头压缩效率
+- 较大的错误细节有效负载可能会遇到协议限制（如最大 header 大小），从而有效失去原始错误
+
+### 错误状态代码
+
+gRPC 在各种情况下引发错误，从网络故障到未经认证的连接，每个连接都与特定的状态代码相关联。所有 gRPC 语言都支持以下错误状态代码。
+
+#### 一般错误
+
+| 案件 | 状态代码|
+| :--- | :-----|
+|客户端应用程序取消请求|GRPC_STATUS_CANCELLED|
+|截止日期在服务器返回状态之前到期|GRPC_STATUS_DEADLINE_EXCEEDED|
+|在服务器上找不到的方法|GRPC_STATUS_UNIMPLEMENTED|
+|服务器关闭|GRPC_STATUS_UNAVAILABLE|
+|服务器抛出异常（或者做了除了返回状态代码以终止RPC之外的其他操作）|GRPC_STATUS_UNKNOWN|
+
+#### 网络故障
+
+| 案件 | 状态代码|
+| :--- | :-----|
+|在截止日期到期之前没有传输数据。也适用于在截止日期到期之前传输某些数据且未检测到其他故障的情况|GRPC_STATUS_DEADLINE_EXCEEDED|
+|在连接中断之前传输了一些数据（例如，请求元数据已写入TCP连接）|GRPC_STATUS_UNAVAILABLE|
+
+#### 协议错误
+
+| 案件 | 状态代码|
+| :--- | :-----|
+|无法解压缩但支持压缩算法|GRPC_STATUS_INTERNAL|
+|客户端使用的压缩机制不受服务器支持|GRPC_STATUS_UNIMPLEMENTED|
+|达到流量控制资源限制|GRPC_STATUS_RESOURCE_EXHAUSTED|
+|流量控制协议违规|GRPC_STATUS_INTERNAL|
+|解析返回状态时出错|GRPC_STATUS_UNKNOWN|
+|未经身份验证：凭据无法获取元数据|GRPC_STATUS_UNAUTHENTICATED|
+|权限元数据中的主机集无效|GRPC_STATUS_UNAUTHENTICATED|
+|解析响应协议缓冲区时出错|GRPC_STATUS_INTERNAL|
+|解析请求协议缓冲区时出错|GRPC_STATUS_INTERNAL|
+
+## 性能
+
+gRPC 旨在支持多种语言的高性能开源RPC。本文档介绍了性能基准测试工具，测试所考虑的方案以及测试基础架构。
+
+### 概览
+
+gRPC 专为分布式应用的高性能和高生产率设计而设计。持续性能基准测试是 gRPC 开发工作流程的关键部分。针对主分支每小时运行多语言性能测试，并将这些数字报告给仪表板以进行可视化。
+
+- [多语言性能仪表板 @latest_release（最新可能用稳定版）](https://performance-dot-grpc-testing.appspot.com/explore?dashboard=5636470266134528)
+- [多语言性能仪表板@master（最新开发版）](https://performance-dot-grpc-testing.appspot.com/explore?dashboard=5652536396611584)
+- [C ++详细性能仪表板@master（最新开发版）](https://performance-dot-grpc-testing.appspot.com/explore?dashboard=5685265389584384)
+
+额外的性能测试可以提供有关 CPU 使用情况的细粒度洞察。
+
+- [C ++全栈微基准测试](https://performance-dot-grpc-testing.appspot.com/explore?dashboard=5684961520648192)
+- [C核心过滤器基准测试](https://performance-dot-grpc-testing.appspot.com/explore?dashboard=5740240702537728)
+- [C Core共享组件基准测试](https://performance-dot-grpc-testing.appspot.com/explore?dashboard=5641826627223552&container=789696829&widget=512792852)
+- [C Core HTTP / 2微基准测试](https://performance-dot-grpc-testing.appspot.com/explore?dashboard=5732910535540736)
+
+### 性能测试设计
+
+每种语言都实现了一个实现 gRPC [WorkerService](https://github.com/grpc/grpc/blob/master/src/proto/grpc/testing/worker_service.proto) 的性能测试工作者 。此服务指示工作人员充当实际基准测试的客户端或服务器，表示为 [BenchmarkService](https://github.com/grpc/grpc/blob/master/src/proto/grpc/testing/benchmark_service.proto)。该服务有两种方法：
+
+- UnaryCall - 一个简单请求的一元RPC，它指定在响应中返回的字节数
+- StreamingCall - 一种流式RPC，允许重复的 ping-pongs 请求和响应消息类似于 UnaryCall
+
+![image](https://grpc.io/img/testing_framework.png)
+
+这些工作程序由[驱动程序](https://github.com/grpc/grpc/blob/master/test/cpp/qps/qps_json_driver.cc)控制，该驱动程序将该方案描述（采用 JSON 格式）和指定每个工作进程的 hots:port 的环境变量作为输入。
+
+### 正在测试的语言
+
+以下语言作为 master 上的客户端和服务器进行连续性能测试：
+
+- C++
+- Java
+- Go
+- C#
+- node.js
+- Python
+- Ruby
+
+此外，从 C core 派生的所有语言都在每次拉取请求时进行了有限的性能测试（冒烟测试）。
+
+除了作为性能测试的客户端和服务器端运行之外，所有语言都作为针对 C++ 服务器的客户端进行测试，并作为针对 C++ 客户端的服务器进行测试。此测试旨在为给定语言的客户端或服务器实现提供当前的性能上限，而无需测试另一方。
+
+虽然 PHP 或移动环境不支持 gRPC 服务器（我们的性能测试需要），但可以使用另一种语言编写的代理 WorkerService 对其客户端性能进行基准测试。此代码是为 PHP 实现的，但尚未处于连续测试模式。
+
+### 正在测试的场景
+
+有几个重要的方案正在测试中并显示在上面的仪表板中，包括以下内容：
+
+- 无争用延迟 - 只有 1 个客户端使用 StreamingCall 一次发送一条消息时看到的中位数和尾部​​响应延迟
+- QPS - 当有 2 个客户端和总共 64 个通道时的消息/秒速率，每个通道使用 StreamingCall 一次发送 100 个未完成的消息
+- 可伸缩性（适用于所选语言） - 每个服务器核心的消息数/秒
+
+大多数性能测试都使用安全通信和 protobufs。一些 C++ 测试还使用不安全的通信和通用（非 protobuf）API 来显示峰值性能。将来可能会添加其他方案。
+
+### 测试基础架构
+
+所有性能基准测试都通过我们的 Jenkins 测试基础架构作为 GCE 中的实例运行。除了上面描述的 gRPC 性能方案之外，我们还运行基线 [netperf TCP_RR](http://www.netperf.org/) 延迟数，以便了解底层网络特征。这些数字出现在我们的仪表板上，有时会根据我们的实例在 GCE 中的分配位置而有所不同。
+
+大多数测试实例都是 8 核系统，这些系统用于延迟和 QPS 测量。对于 C++ 和 Java，我们还支持在 32 核系统上进行 QPS 测试。所有 QPS 测试都为每台服务器使用 2 台相同的客户端计算机，以确保 QPS 测量不受客户端限制。
