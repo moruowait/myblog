@@ -37,3 +37,5 @@ tags:
 - [Go 如何优雅关闭 Channel](https://studygolang.com/articles/20786)
 
 - [Go 减少类型层次结构，用 interface 替代组合基本类型](https://www.ardanlabs.com/blog/2016/10/reducing-type-hierarchies.html)
+
+- [Go HTTP 请求超时入门](https://studygolang.com/articles/14405)
