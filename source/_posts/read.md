@@ -1,6 +1,6 @@
 ---
 title: 阅读列表
-date: 2019-04-25 16:56:10
+date: 2019-06-29 14:56:10
 toc: true
 tags:
 - 已阅
@@ -35,3 +35,5 @@ tags:
 - [Go Slice 与 Map 效率解析](https://studygolang.com/articles/11799)
 
 - [Go 如何优雅关闭 Channel](https://studygolang.com/articles/20786)
+
+- [Go 减少类型层次结构，用 interface 替代组合基本类型](https://www.ardanlabs.com/blog/2016/10/reducing-type-hierarchies.html)
