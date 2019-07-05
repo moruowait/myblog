@@ -39,3 +39,9 @@ tags:
 - [Go 减少类型层次结构，用 interface 替代组合基本类型](https://www.ardanlabs.com/blog/2016/10/reducing-type-hierarchies.html)
 
 - [Go HTTP 请求超时入门](https://studygolang.com/articles/14405)
+
+- [Go time.Duration 解析](https://studygolang.com/articles/12617)
+
+### 五、缓存
+
+- [分布式系统为什么需要缓存](https://studygolang.com/articles/15064)
