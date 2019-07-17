@@ -45,3 +45,17 @@ tags:
 ### 五、缓存
 
 - [分布式系统为什么需要缓存?](https://studygolang.com/articles/15064)
+
+### 六、小知识
+
+- [回车和换行](http://www.ruanyifeng.com/blog/2006/04/post_213.html)
+
+- [字符编码：ASCLL、Unicode、UTF-8](http://www.ruanyifeng.com/blog/2007/10/ascii_unicode_and_utf-8.html)
+
+- [Unix 哲学](http://www.ruanyifeng.com/blog/2009/06/unix_philosophy.html)
+
+- [关于 2 的补码](http://www.ruanyifeng.com/blog/2009/08/twos_complement.html)
+
+- [Unix 版权史](http://www.ruanyifeng.com/blog/2010/03/unix_copyright_history.html)
+
+- [浮点数的二进制表示](http://www.ruanyifeng.com/blog/2010/06/ieee_floating-point_representation.html)
