@@ -68,7 +68,7 @@ aad abd acd
 
 - 当 Bash 作为简单命令的参数出现时，Bash 还会对满足变量赋值条件的单词执行波浪扩展（请参阅[Shell参数](https://www.gnu.org/software/bash/manual/html_node/Shell-Parameters.html#Shell-Parameters）)。在 POSIX 模式下，Bash 不执行此操作，但上面列出的声明命令除外。
 
-### [Parameter Expansion](https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html#Shell-Parameter-Expansion)
+### [Shell Parameter Expansion](https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html#Shell-Parameter-Expansion)
 
 参数扩展：
 
@@ -192,7 +192,7 @@ ${!name[*]}
 
 如果 name 是数组变量，则展开到 name 中指定的数组索引列表。如果 name 不是数组，则在设置 name 时扩展为 0，否则为 null。用 `@` 的时候，扩展出现在双引号内，每个键扩展为一个单独的单词。
 
-- 长度
+- 参数长度
 
 ```bash
 ${#parameter}
@@ -208,4 +208,108 @@ $ array=(a b c)
 $ echo ${#array[@]} # echo ${#array[*]}
 3
 ```
+
+- "掐头去尾"
+
+截取又分两种操作，"掐头"和去"去尾"。与正则表达式中不同，头和尾在这里对应的符号分别是"#"和"%"。
+
+```bash
+# 掐头
+${parameter#word} 或 ${parameter##word}
+```
+
+作用：从 parameter 头部开始匹配 word，并删除成功匹配的部分。在构造 word 时可以使用 "*" 表示任意长度字符，"?" 表示单位长度字符，并可用形如 "[a-c]" 的方式来指定匹配 "abc" 中的任意字符。如果参数是 `@` 或者 `*`，则将规则应用于每个位置的参数并返回结果列表，如果参数是数组且下标为 `@` 或者 `*`，则将规则应用于每个数组元素，并返回数组
+
+另外，"#" 和 "##" 的区别在于前者是最短匹配，而后者是最长匹配；实际上就是正则表达式中的"懒惰"和"贪婪"的概念。下面的例子能够很清楚地看出这两者的区别。比如说:
+
+```bash
+$ var=brbread
+$ echo ${var##*br} # 匹配最长
+ead
+$ echo ${var#*br} # 只匹配一次
+bread
+```
+
+```bash
+# 去尾
+${parameter%word} 或 ${parameter%%word}
+```
+
+作用: 与掐头相同，唯一不同的是从 ${parameter} 的尾部开始匹配。如果参数是 `@` 或者 `*`，则将规则应用于每个位置的参数并返回结果列表，如果参数是数组且下标为 `@` 或者 `*`，则将规则应用于每个数组元素，并返回数组，例子:
+
+```bash
+$ var="La.Maison.en.Petits.Cubes.avi"
+$ echo ${var%.*}
+La.Maison.en.Petits.Cubes
+$ echo ${var%%.*}
+La
+```
+
+- 字符串替换
+
+```bash
+${parameter/pattern/string}
+```
+
+作用: 将 ${parameter| 中出现的第一个 pattern 替换为 string。如果参数是 `@` 或者 `*`，则将规则应用于每个位置的参数并返回结果列表，如果参数是数组且下标为 `@` 或者 `*`，则将规则应用于每个数组元素，并返回数组。值得注意的是，除了 "*", "?" 和 "[]" 以外，pattern 的头部还可以使用下面几个字符:
+
+表达式 | 描述
+--- | ---
+"/" | 如果 pattern 以 "/" 起始，则所有的匹配项都要替换。而默认的行为只是替换最左侧的一个
+"#" | 如果 pattern 以 "#" 起始，则与正则表达式匹配规则相同，只有在 ${parameter} 的头部找到匹配项才会进行替换
+"%" | 与 "#" 类似，只是这次变成了尾部匹配
+
+例子：
+
+```bash
+var="see"
+echo ${var/e/a} #只有第一个e会被替换
+sae
+
+echo ${var/ee/it}
+sit
+
+echo ${var//e/a} #所有的e都会被替换
+saa
+
+echo ${var/#e/a} #头部的e才会被替换
+see
+
+echo ${var/#s/b}
+bee
+
+echo ${var/%e/a}
+sea
+```
+
+- 大小写转换
+
+此展开修改参数中字母字符的大小写。该模式被展开以生成与文件名展开中一样的模式。参数展开值中的每个字符都将根据模式进行测试，如果匹配模式，则转换其大小写。该模式不应尝试匹配多个字符。
+
+表达式 | 描述
+--- | ---
+${parameter^pattern} | `^` 操作符将匹配模式的小写字母转换为大写字母，只转换第一个字符
+${parameter,pattern} | `,` 操作符将匹配的大写字母转换为小写字母，只转换第一个字符
+${parameter,,pattern} <br> ${parameter^^pattern} | `^^` 和 `,,` 反转所有匹配到的字符
+
+如果省略了 pattern，则认为是 `?`，将匹配所有字符。如果参数是 `@` 或者 `*`，则将规则应用于每个位置的参数并返回结果列表，如果参数是数组且下标为 `@` 或者 `*`，则将规则应用于每个数组元素，并返回数组。
+
+- 一些特殊展开
+
+```bash
+${parameter@operator}
+```
+
+这个展开可以是参数值的转换，也可以是参数本身的信息，这取决于操作符的值。每一个操作符是一个字母：
+
+操作符 | 描述
+--- | ---
+Q | 展开是一个字符串，它是可以作为输入重用的格式中引用的参数值
+E | 展开是一个字符串，它是参数的值，使用 $'…' 引用机制展开反斜杠转义序列
+P | 展开是一个字符串，它是将 parameter 的值展开为提示字符串的结果(请参见[控制提示](https://www.gnu.org/software/bash/manual/html_node/Controlling-the-Prompt.html#Controlling-the-Prompt))
+A | 展开是赋值语句或声明命令形式的字符串，如果对其求值，将用其属性和值重新创建参数
+a | 展开是由表示参数属性的标志值组成的字符串
+
+如果参数是 `@` 或者 `*`，则将规则应用于每个位置的参数并返回结果列表，如果参数是数组且下标为 `@` 或者 `*`，则将规则应用于每个数组元素，并返回数组。
+
 
