@@ -312,4 +312,17 @@ a | 展开是由表示参数属性的标志值组成的字符串
 
 如果参数是 `@` 或者 `*`，则将规则应用于每个位置的参数并返回结果列表，如果参数是数组且下标为 `@` 或者 `*`，则将规则应用于每个数组元素，并返回数组。
 
+### [Command Substitution](https://www.gnu.org/software/bash/manual/html_node/Command-Substitution.html#Command-Substitution)
+
+```bash
+$(command) or `command`
+```
+
+Bash 通过在子 shell 环境中执行命令并使用命令的标准输出替换命令替换来执行扩展，并删除任何尾随的换行符。嵌入的换行不会被删除。但是在 word splitting 的时候会被移除。 命令 `${cat file}` 可以被执行得更快的 `$(< file)` 替代。
+
+当使用反引号的形式进行替换时，反斜杠保留其字面意义，除非后面跟着 `'$'`，``'`'``，要么 `'\'`。第一个不带反斜杠的反引号会终止命令替换。当用 `${command}` 的形式，所有括号之间的字符组成命令，没有任何特殊的情况。
+
+command substitution 可以嵌套，要在使用反引号形式时进行嵌套，请使用反斜杠转义内部反引号。如果替换出现在双引号中，则不会对结果执行 word splitting 和 文件名扩展。
+
+
 
