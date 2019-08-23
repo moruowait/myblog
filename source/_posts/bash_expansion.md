@@ -361,3 +361,17 @@ Shell 将 `IFS` 的每个字符视为分隔符，并使用这些字符作为字�
 保留显式空参数（" " 或 ' '）并将其作为空字符串传递给命令。将删除由于没有值的参数的扩展而产生的不带引号的隐式空参数。如果在双引号内扩展没有值的参数，则会生成并返回 null 参数，并将其作为空字符串传递给命令。当引用的 null 参数作为扩展为非 null 的单词的一部分出现时，将删除 null 参数。也就是说，在 word splitting 和 null argument removal 之后，单词 `-d' '`变为 `-d`。
 
 请注意，如果未发生 expansion，则不会进行拆分
+
+### [Filename Expansion](https://www.gnu.org/software/bash/manual/html_node/Filename-Expansion.html#Filename-Expansion)
+
+- [Pattern Matching](https://www.gnu.org/software/bash/manual/html_node/Pattern-Matching.html#Pattern-Matching): How the shell matches patterns
+
+word splitting 之后，除非设置 `-f` 选项（请参阅 [The Set Builtin](https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html#The-Set-Builtin)）， bash 会扫描每个单词的字符 `'*'`，`'?'`，`'['`。如果出现了这些字符的任意一个，那么这个单词被视为是个 pattern，并替换为与该 pattern 匹配的按字母顺序排列的文件名列表（请参阅 [Pattern Matching](https://www.gnu.org/software/bash/manual/html_node/Pattern-Matching.html#Pattern-Matching)）。如果未找到匹配的文件名，并且禁用了 shell 的 `nullglob` 选项，则该字保持不变。如果设置了 `nullglob` 选项，但未找到匹配项，则删除该单词。如果设置了 shell 的 `failglob` 选项，并且未找到匹配项，则会打印错误消息并且不执行该命令。如果启用了 shell 的 `nocaseglob` 选项，则执行匹配而不考虑字母字符的情况。
+
+当一个 pattern 用于文件名扩展时，除非设置了 shell 的 `dotglob` 这个选项，否则文件名开头的字符 `'.'` 或者 `'./'` 应该明确匹配。即使 `dotglob` 已经设置，`'.'` 及 `'..'` 文件名都必须显式匹配。其他情况下，`'.'` 字符不受特别对待。
+
+匹配文件名时，斜杠字符必须始终通过模式中的斜杠显式匹配，但在其他匹配上下文中，它可以通过特殊模式字符进行匹配，如下所述（请参阅 [Pattern Matching](https://www.gnu.org/software/bash/manual/html_node/Pattern-Matching.html#Pattern-Matching)）。
+
+`nocaseglob`, `nullglob`, `failglob` 和 `dotglob` 的描述请见 [The Shopt Builtin](https://www.gnu.org/software/bash/manual/html_node/The-Shopt-Builtin.html#The-Shopt-Builtin) `shopt` 描述。
+
+Shell 的 `GLOBIGNORE` 变量可以用来限制该组匹配的文件名。如果设置了 `GLOBIGNORE`,`GLOBIGNORE` 则从匹配列表中删除与其中一个模式匹配的每个匹配文件名 。如果设置了 `nocaseglob`，`GLOBIGNORE` 则执行与模式的匹配 而不考虑大小写。文件名 `.` 和 `..` 在 `GLOBIGNORE` 设置时始终忽略，而不是 null。但是，设置 `GLOBIGNORE` 为非 null 值具有启用 `dotglob` shell 选项的效果，因此所有其他以 `'.'` 开头的文件都会匹配。为了获得忽略文件名以 `'.'` 开头的行为，就在 `GLOBIGNORE` 模式下设置 `'.*'` 的 patterns。在未设置 `GLOBIGNORE` 时， `dotglob` 是禁用的。
