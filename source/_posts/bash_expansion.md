@@ -334,4 +334,16 @@ $(( expression ))
 
 计算规则: [Shell Arithmetic](https://www.gnu.org/software/bash/manual/html_node/Shell-Arithmetic.html#Shell-Arithmetic)
 
+### [Process Substitution](https://www.gnu.org/software/bash/manual/html_node/Process-Substitution.html#Process-Substitution)
 
+Process substitution 允许使用文件名引用进程的输入或输出。
+
+```bash
+<(list)
+# or
+>(list)
+```
+
+进程列表以异步的方式运行，其输入或输出显示为文件名。作为扩展的结果，此文件名作为参数传递给当前命令。如果使用 `>(list)` 形式，写入文件将提供列表输入。如果使用 `<(list)`，则应读取作为参数传递的文件以获取列表的输出。请注意，在 `<` 或 `>` 与左括号之间不能有空格，否则会被解释为重定向。支持命名管道（FIFO）或者命名打开文件的 `/dev/fd` 方法的系统支持 process substitution。
+
+可用时，进程替换与参数和变量扩展，命令替换和算术扩展同时执行。
