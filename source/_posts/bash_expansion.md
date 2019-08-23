@@ -324,5 +324,14 @@ Bash 通过在子 shell 环境中执行命令并使用命令的标准输出替�
 
 command substitution 可以嵌套，要在使用反引号形式时进行嵌套，请使用反斜杠转义内部反引号。如果替换出现在双引号中，则不会对结果执行 word splitting 和 文件名扩展。
 
+### [Arithmetic Expansion](https://www.gnu.org/software/bash/manual/html_node/Arithmetic-Expansion.html#Arithmetic-Expansion)
+
+```bash
+$(( expression ))
+```
+
+该表达式被视为在双引号内，但括号内的双引号没有被特别处理。表达式中的所有标记都经 parameter expansion，variable expansion，command substitution，quote removal。结果被视为要计算的算术表达式。算术扩展可以嵌套。如果表达式无效，Bash 将打印一条消息，指示标准错误失败并且不会发生替换。
+
+计算规则: [Shell Arithmetic](https://www.gnu.org/software/bash/manual/html_node/Shell-Arithmetic.html#Shell-Arithmetic)
 
 
