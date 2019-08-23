@@ -12,6 +12,22 @@ tags:
 
 ## 七种 expansion
 
+按照 expansion 的顺序排序如下：
+
+- Brace Expansion
+- Tilde Expansion
+- Parameter and Variable Expansion
+- Arithmetic Expansion
+- Command Substitution
+- Word Splitting
+- Filename Expansion
+
+在能够支持 Process substitution 的机器上，这个流程与 tilde，parameter，variable 和 arithmetic expansion、command substitution 同时执行。
+
+只有 brace expansion，word splitting 和 filename expansion 才能增加扩展的字数；其他扩展将单个单词扩展为单个单词（意思是不增加字数）。唯一的例外是 `"$@"` 和 `$*` 扩展（见 [Special Parameter](https://www.gnu.org/software/bash/manual/html_node/Special-Parameters.html#Special-Parameters)）和 `"${name[@]}"` 和 `"${name[*]}"`（见 [Arrays](https://www.gnu.org/software/bash/manual/html_node/Arrays.html#Arrays)）
+
+在执行这些扩展之后，将删除原单词中出现的引号字符，除非它们本身已经被引用(Quote Removal)。
+
 ### [Brace Expansion](https://www.gnu.org/software/bash/manual/html_node/Brace-Expansion.html#Brace-Expansion)
 
 括号内扩展，可以嵌套，每个扩展的结果都没有排序，保持从左到右的顺序。
@@ -375,3 +391,7 @@ word splitting 之后，除非设置 `-f` 选项（请参阅 [The Set Builtin](h
 `nocaseglob`, `nullglob`, `failglob` 和 `dotglob` 的描述请见 [The Shopt Builtin](https://www.gnu.org/software/bash/manual/html_node/The-Shopt-Builtin.html#The-Shopt-Builtin) `shopt` 描述。
 
 Shell 的 `GLOBIGNORE` 变量可以用来限制该组匹配的文件名。如果设置了 `GLOBIGNORE`,`GLOBIGNORE` 则从匹配列表中删除与其中一个模式匹配的每个匹配文件名 。如果设置了 `nocaseglob`，`GLOBIGNORE` 则执行与模式的匹配 而不考虑大小写。文件名 `.` 和 `..` 在 `GLOBIGNORE` 设置时始终忽略，而不是 null。但是，设置 `GLOBIGNORE` 为非 null 值具有启用 `dotglob` shell 选项的效果，因此所有其他以 `'.'` 开头的文件都会匹配。为了获得忽略文件名以 `'.'` 开头的行为，就在 `GLOBIGNORE` 模式下设置 `'.*'` 的 patterns。在未设置 `GLOBIGNORE` 时， `dotglob` 是禁用的。
+
+### [Quote Removal](https://www.gnu.org/software/bash/manual/html_node/Quote-Removal.html#Quote-Removal)
+
+在进行前面的扩展后，所有出现的未被的引号引用的字符如：`\`，`'`，`"`，这些不是由上述某个扩展产生的结果都会被删除
