@@ -22,6 +22,8 @@ tags:
 - Word Splitting
 - Filename Expansion
 
+<!-- more -->
+
 在能够支持 Process substitution 的机器上，这个流程与 tilde，parameter，variable 和 arithmetic expansion、command substitution 同时执行。
 
 只有 brace expansion，word splitting 和 filename expansion 才能增加扩展的字数；其他扩展将单个单词扩展为单个单词（意思是不增加字数）。唯一的例外是 `"$@"` 和 `$*` 扩展（见 [Special Parameter](https://www.gnu.org/software/bash/manual/html_node/Special-Parameters.html#Special-Parameters)）和 `"${name[@]}"` 和 `"${name[*]}"`（见 [Arrays](https://www.gnu.org/software/bash/manual/html_node/Arrays.html#Arrays)）
