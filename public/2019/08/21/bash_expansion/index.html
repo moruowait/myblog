@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="莫的主页">
 <meta property="og:description" content="说明在将命令行拆分为 tokenS 后，将在命令行上执行扩展。 七种 expansion按照 expansion 的顺序排序如下：  Brace Expansion Tilde Expansion Parameter and Variable Expansion Arithmetic Expansion Command Substitution Word Splitting Filename Ex">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-08-23T09:59:23.447Z">
+<meta property="og:updated_time" content="2019-09-05T03:53:20.666Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Shell Expansion">
 <meta name="twitter:description" content="说明在将命令行拆分为 tokenS 后，将在命令行上执行扩展。 七种 expansion按照 expansion 的顺序排序如下：  Brace Expansion Tilde Expansion Parameter and Variable Expansion Arithmetic Expansion Command Substitution Word Splitting Filename Ex">
@@ -186,6 +186,7 @@
 <li>Word Splitting</li>
 <li>Filename Expansion</li>
 </ul>
+<a id="more"></a>
 <p>在能够支持 Process substitution 的机器上，这个流程与 tilde，parameter，variable 和 arithmetic expansion、command substitution 同时执行。</p>
 <p>只有 brace expansion，word splitting 和 filename expansion 才能增加扩展的字数；其他扩展将单个单词扩展为单个单词（意思是不增加字数）。唯一的例外是 <code>&quot;$@&quot;</code> 和 <code>$*</code> 扩展（见 <a href="https://www.gnu.org/software/bash/manual/html_node/Special-Parameters.html#Special-Parameters" target="_blank" rel="noopener">Special Parameter</a>）和 <code>&quot;${name[@]}&quot;</code> 和 <code>&quot;${name[*]}&quot;</code>（见 <a href="https://www.gnu.org/software/bash/manual/html_node/Arrays.html#Arrays" target="_blank" rel="noopener">Arrays</a>）</p>
 <p>在执行这些扩展之后，将删除原单词中出现的引号字符，除非它们本身已经被引用(Quote Removal)。</p>
@@ -683,15 +684,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Go</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Javascript</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">技术名词</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">shell</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Go</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -704,10 +709,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">已阅</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Javascript</a>
               </li>
              
               <li class="article-tag-list-item">
