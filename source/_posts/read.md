@@ -46,7 +46,11 @@ tags:
 
 - [分布式系统为什么需要缓存?](https://studygolang.com/articles/15064)
 
-### 六、科普知识
+### 六、工具类语言
+
+- [Jsonnet 学习](https://jsonnet.org/learning/tutorial.html)
+
+### 七、科普知识
 
 - [回车和换行](http://www.ruanyifeng.com/blog/2006/04/post_213.html)
 
