@@ -63,3 +63,5 @@ tags:
 - [Unix 版权史](http://www.ruanyifeng.com/blog/2010/03/unix_copyright_history.html)
 
 - [浮点数的二进制表示](http://www.ruanyifeng.com/blog/2010/06/ieee_floating-point_representation.html)
+
+- [摩斯电吗](https://mp.weixin.qq.com/s/wuu9VCETyBHSzfMRtxmtTg)
