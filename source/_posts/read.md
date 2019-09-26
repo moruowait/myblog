@@ -14,6 +14,8 @@ tags:
 
 - [大数如何相加](https://juejin.im/post/5c2c7e1ff265da611d66c4dd)
 
+- [抢红包算法](https://juejin.im/post/5af80310f265da0b8636585e)
+
 ### 二、计算机网络
 
 - [访问网站 DNS 相关的流程](https://geekshuai.github.io/posts/fb1665c6.html)
