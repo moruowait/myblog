@@ -6,20 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Shell Expansion | 莫的主页</title>
+  <title>阅读列表 | 莫的主页</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="说明在将命令行拆分为 tokenS 后，将在命令行上执行扩展。 七种 expansion按照 expansion 的顺序排序如下：  Brace Expansion Tilde Expansion Parameter and Variable Expansion Arithmetic Expansion Command Substitution Word Splitting Filename Ex">
-<meta name="keywords" content="shell">
+  <meta name="description" content="本文记录一些已经阅读过的知识点列表，需要整理的会整理到博客中，不需要整理的在本列表体现。 一、算法 10 分钟带你了解一致性 hash 算法  大数如何相加  抢红包算法   二、计算机网络 访问网站 DNS 相关的流程  三、Go 语言源码解析 Go 深度解密 map  Go 逃逸分析之变量分配到栈还是堆？  Go 深度解密 Slice  Go 深度解密 interface 的 10 个问题">
+<meta name="keywords" content="已阅">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Shell Expansion">
-<meta property="og:url" content="http://yoursite.com/2019/08/21/bash_expansion/index.html">
+<meta property="og:title" content="阅读列表">
+<meta property="og:url" content="http://yoursite.com/2019/09/24/read/index.html">
 <meta property="og:site_name" content="莫的主页">
-<meta property="og:description" content="说明在将命令行拆分为 tokenS 后，将在命令行上执行扩展。 七种 expansion按照 expansion 的顺序排序如下：  Brace Expansion Tilde Expansion Parameter and Variable Expansion Arithmetic Expansion Command Substitution Word Splitting Filename Ex">
+<meta property="og:description" content="本文记录一些已经阅读过的知识点列表，需要整理的会整理到博客中，不需要整理的在本列表体现。 一、算法 10 分钟带你了解一致性 hash 算法  大数如何相加  抢红包算法   二、计算机网络 访问网站 DNS 相关的流程  三、Go 语言源码解析 Go 深度解密 map  Go 逃逸分析之变量分配到栈还是堆？  Go 深度解密 Slice  Go 深度解密 interface 的 10 个问题">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-09-05T03:53:20.666Z">
+<meta property="og:updated_time" content="2019-09-24T09:22:23.394Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Shell Expansion">
-<meta name="twitter:description" content="说明在将命令行拆分为 tokenS 后，将在命令行上执行扩展。 七种 expansion按照 expansion 的顺序排序如下：  Brace Expansion Tilde Expansion Parameter and Variable Expansion Arithmetic Expansion Command Substitution Word Splitting Filename Ex">
+<meta name="twitter:title" content="阅读列表">
+<meta name="twitter:description" content="本文记录一些已经阅读过的知识点列表，需要整理的会整理到博客中，不需要整理的在本列表体现。 一、算法 10 分钟带你了解一致性 hash 算法  大数如何相加  抢红包算法   二、计算机网络 访问网站 DNS 相关的流程  三、Go 语言源码解析 Go 深度解密 map  Go 逃逸分析之变量分配到栈还是堆？  Go 深度解密 Slice  Go 深度解密 interface 的 10 个问题">
   
     <link rel="alternative" href="/atom.xml" title="莫的主页" type="application/atom+xml">
   
@@ -155,315 +155,86 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-bash_expansion" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-read" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      Shell Expansion
+      阅读列表
     </h1>
   
 
         
-        <a href="/2019/08/21/bash_expansion/" class="archive-article-date">
-  	<time datetime="2019-08-21T09:55:57.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-08-21</time>
+        <a href="/2019/09/24/read/" class="archive-article-date">
+  	<time datetime="2019-09-24T06:56:10.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-09-24</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>在将命令行拆分为 tokenS 后，将在命令行上执行扩展。</p>
-<h2 id="七种-expansion"><a href="#七种-expansion" class="headerlink" title="七种 expansion"></a>七种 expansion</h2><p>按照 expansion 的顺序排序如下：</p>
-<ul>
-<li>Brace Expansion</li>
-<li>Tilde Expansion</li>
-<li>Parameter and Variable Expansion</li>
-<li>Arithmetic Expansion</li>
-<li>Command Substitution</li>
-<li>Word Splitting</li>
-<li>Filename Expansion</li>
-</ul>
-<a id="more"></a>
-<p>在能够支持 Process substitution 的机器上，这个流程与 tilde，parameter，variable 和 arithmetic expansion、command substitution 同时执行。</p>
-<p>只有 brace expansion，word splitting 和 filename expansion 才能增加扩展的字数；其他扩展将单个单词扩展为单个单词（意思是不增加字数）。唯一的例外是 <code>&quot;$@&quot;</code> 和 <code>$*</code> 扩展（见 <a href="https://www.gnu.org/software/bash/manual/html_node/Special-Parameters.html#Special-Parameters" target="_blank" rel="noopener">Special Parameter</a>）和 <code>&quot;${name[@]}&quot;</code> 和 <code>&quot;${name[*]}&quot;</code>（见 <a href="https://www.gnu.org/software/bash/manual/html_node/Arrays.html#Arrays" target="_blank" rel="noopener">Arrays</a>）</p>
-<p>在执行这些扩展之后，将删除原单词中出现的引号字符，除非它们本身已经被引用(Quote Removal)。</p>
-<h3 id="Brace-Expansion"><a href="#Brace-Expansion" class="headerlink" title="Brace Expansion"></a><a href="https://www.gnu.org/software/bash/manual/html_node/Brace-Expansion.html#Brace-Expansion" target="_blank" rel="noopener">Brace Expansion</a></h3><p>括号内扩展，可以嵌套，每个扩展的结果都没有排序，保持从左到右的顺序。</p>
-<h4 id="表达式一，用逗号分割"><a href="#表达式一，用逗号分割" class="headerlink" title="表达式一，用逗号分割"></a>表达式一，用逗号分割</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">echo</span> a&#123;b,c,d&#125;e</span><br><span class="line">abe ace ade</span><br></pre></td></tr></table></figure>
-<h4 id="表达式二，-x-y-incr"><a href="#表达式二，-x-y-incr" class="headerlink" title="表达式二，{x..y[..incr]}"></a>表达式二，<code>{x..y[..incr]}</code></h4><p>x 和 y 可以是数字或者字母(单字母), incr 是 int 类型递增量，默认是 1 或者 -1:</p>
-<ul>
-<li>数字</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">echo</span> a&#123;10..40..10&#125;c</span><br><span class="line">a10c a20c a30c a40c</span><br></pre></td></tr></table></figure>
-<ul>
-<li>子母</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">echo</span> a&#123;a..c&#125;d</span><br><span class="line">aad abd acd</span><br></pre></td></tr></table></figure>
-<h4 id="注意点"><a href="#注意点" class="headerlink" title="注意点"></a>注意点</h4><ul>
-<li><p>Brace expansion 会优先于其他扩展执行，并且在结果中保留对其他扩展特殊的任何字符。这是严格的文字话的，bash 不对 brace expansion 之间的文本应用任何语法解释</p>
+        <p>本文记录一些已经阅读过的知识点列表，需要整理的会整理到博客中，不需要整理的在本列表体现。</p>
+<h3 id="一、算法"><a href="#一、算法" class="headerlink" title="一、算法"></a>一、算法</h3><ul>
+<li><p><a href="https://geekshuai.github.io/posts/14aa896.html" target="_blank" rel="noopener">10 分钟带你了解一致性 hash 算法</a></p>
 </li>
-<li><p>包含不带引号的 <code>{</code> 或 <code>}</code>，以及至少一个不带引号的 <code>,</code> 或者有效的序列表达式</p>
+<li><p><a href="https://juejin.im/post/5c2c7e1ff265da611d66c4dd" target="_blank" rel="noopener">大数如何相加</a></p>
 </li>
-<li><p><code>{</code> 或 <code>,</code> 可以用 <code>\</code> 引用来防止它们被视为 brace expansion 表达式的一部分。为了避免冲与 parameter expansion 冲突，字符串 <code>${</code> 对 brace expansion 来说是非法的，并且禁止 brace expansion 直至遇到一个 <code>}</code></p>
+<li><p><a href="https://juejin.im/post/5af80310f265da0b8636585e" target="_blank" rel="noopener">抢红包算法</a></p>
 </li>
 </ul>
-<h3 id="Tilde-Expansion"><a href="#Tilde-Expansion" class="headerlink" title="Tilde Expansion"></a><a href="https://www.gnu.org/software/bash/manual/html_node/Tilde-Expansion.html#Tilde-Expansion" target="_blank" rel="noopener">Tilde Expansion</a></h3><p>波浪线扩展，下面显示了 bash 如何处理不带引号的波浪号前缀：</p>
-<table>
-<thead>
-<tr>
-<th>表达式</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>~</code></td>
-<td>$HOME 值</td>
-</tr>
-<tr>
-<td><code>~/foo</code></td>
-<td>$HOME/foo</td>
-</tr>
-<tr>
-<td><code>~fred/foo</code></td>
-<td>用户 fred 下的 foo 目录，即 /Users/fred/foo</td>
-</tr>
-<tr>
-<td><code>~+/foo</code></td>
-<td>$PWD/foo</td>
-</tr>
-<tr>
-<td><code>~-/foo</code></td>
-<td>${OLDPWD-‘~-‘}/foo</td>
-</tr>
-<tr>
-<td><code>~N</code></td>
-<td>等同于 <code>dirs +N</code></td>
-</tr>
-<tr>
-<td><code>~+N</code></td>
-<td>等同于 <code>dirs +N</code></td>
-</tr>
-<tr>
-<td><code>~-N</code></td>
-<td>等同于 <code>dirs -N</code></td>
-</tr>
-</tbody>
-</table>
-<h4 id="注意点-1"><a href="#注意点-1" class="headerlink" title="注意点"></a>注意点</h4><ul>
-<li>当 Bash 作为简单命令的参数出现时，Bash 还会对满足变量赋值条件的单词执行波浪扩展（请参阅<a href="https://www.gnu.org/software/bash/manual/html_node/Shell-Parameters.html#Shell-Parameters）" target="_blank" rel="noopener">Shell参数</a>。在 POSIX 模式下，Bash 不执行此操作，但上面列出的声明命令除外。</li>
+<h3 id="二、计算机网络"><a href="#二、计算机网络" class="headerlink" title="二、计算机网络"></a>二、计算机网络</h3><ul>
+<li><a href="https://geekshuai.github.io/posts/fb1665c6.html" target="_blank" rel="noopener">访问网站 DNS 相关的流程</a></li>
 </ul>
-<h3 id="Shell-Parameter-Expansion"><a href="#Shell-Parameter-Expansion" class="headerlink" title="Shell Parameter Expansion"></a><a href="https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html#Shell-Parameter-Expansion" target="_blank" rel="noopener">Shell Parameter Expansion</a></h3><p>参数扩展：</p>
-<ul>
-<li>普通扩展，如果省略冒号，则不检查是否为 null，而是只检查是否存在</li>
+<h3 id="三、Go-语言源码解析"><a href="#三、Go-语言源码解析" class="headerlink" title="三、Go 语言源码解析"></a>三、Go 语言源码解析</h3><ul>
+<li><p><a href="https://www.cnblogs.com/qcrao-2018/p/10903807.html" target="_blank" rel="noopener">Go 深度解密 map</a></p>
+</li>
+<li><p><a href="https://www.cnblogs.com/qcrao-2018/p/10453260.html" target="_blank" rel="noopener">Go 逃逸分析之变量分配到栈还是堆？</a></p>
+</li>
+<li><p><a href="https://www.cnblogs.com/qcrao-2018/p/10631989.html" target="_blank" rel="noopener">Go 深度解密 Slice</a></p>
+</li>
+<li><p><a href="https://www.cnblogs.com/qcrao-2018/p/10766091.html" target="_blank" rel="noopener">Go 深度解密 interface 的 10 个问题</a></p>
+</li>
+<li><p><a href="https://www.cnblogs.com/qcrao-2018/p/10822655.html" target="_blank" rel="noopener">Go 深度解密反射</a></p>
+</li>
 </ul>
-<table>
-<thead>
-<tr>
-<th>表达式</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>${parameter:-word}</td>
-<td>如果 parameter 未设置或者为 null，则替换为 word</td>
-</tr>
-<tr>
-<td>${parameter:=word}</td>
-<td>如果 parameter 未设置或者为 null，则将 word 赋值给 parameter，不能以这种方式赋值给 positional parameters 和 special parameters</td>
-</tr>
-<tr>
-<td>${parameter:?word}</td>
-<td>如果 parameter 未设置或者为 null，则报错并写入 stderr，如果 shell 不是交互式的就退出，否则参数值将被替换</td>
-</tr>
-<tr>
-<td>${parameter:+word}</td>
-<td>如果 parameter 未设置或者为 null，则不替换，否则替换</td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li>间接扩展</li>
+<h3 id="四、Go-语言相关解析"><a href="#四、Go-语言相关解析" class="headerlink" title="四、Go 语言相关解析"></a>四、Go 语言相关解析</h3><ul>
+<li><p><a href="https://mp.weixin.qq.com/s/US7MnIJfekJRazioxyWQhg" target="_blank" rel="noopener">Go 中的方法接收器</a></p>
+</li>
+<li><p><a href="https://studygolang.com/articles/11799" target="_blank" rel="noopener">Go Slice 与 Map 效率解析</a></p>
+</li>
+<li><p><a href="https://studygolang.com/articles/20786" target="_blank" rel="noopener">Go 如何优雅关闭 Channel</a></p>
+</li>
+<li><p><a href="https://www.ardanlabs.com/blog/2016/10/reducing-type-hierarchies.html" target="_blank" rel="noopener">Go 减少类型层次结构，用 interface 替代组合基本类型</a></p>
+</li>
+<li><p><a href="https://studygolang.com/articles/14405" target="_blank" rel="noopener">Go HTTP 请求超时入门</a></p>
+</li>
+<li><p><a href="https://studygolang.com/articles/12617" target="_blank" rel="noopener">Go time.Duration 解析</a></p>
+</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$&#123;!parameter&#125;</span></span><br><span class="line"><span class="comment"># 相当于$&#123;var&#125;，而var=$&#123;parameter&#125;。比如说：</span></span><br><span class="line">$ param=<span class="string">"var"</span></span><br><span class="line">$ var=<span class="string">"Hello, Bread"</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$&#123;!param&#125;</span></span><br><span class="line">Hello, Bread</span><br></pre></td></tr></table></figure>
-<ul>
-<li>子串扩展（截取子串）</li>
+<h3 id="五、缓存"><a href="#五、缓存" class="headerlink" title="五、缓存"></a>五、缓存</h3><ul>
+<li><a href="https://studygolang.com/articles/15064" target="_blank" rel="noopener">分布式系统为什么需要缓存?</a></li>
 </ul>
-<table>
-<thead>
-<tr>
-<th>表达式</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>${parameter:offset}</td>
-<td>省略 length，从 offset 至末尾</td>
-</tr>
-<tr>
-<td>${parameter:offset:length}</td>
-<td>如果 offset 小于零，则该值将用作 parameter 末尾的字符偏移量。如果 length 小于零，则将其解释为字符与 parameter 末尾的偏移量而不是字符数。请特别注意：负偏移量必须与冒号分隔至少一个空格以避免 <code>:-</code> expansion。</td>
-</tr>
-</tbody>
-</table>
-<p>以下是一些示例，说明 parameter 和下标数组的字符串扩展：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ str=01234567890abcdefgh</span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$&#123;str:7&#125;</span></span><br><span class="line">7890abcdefgh</span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$&#123;str:7:0&#125;</span></span><br><span class="line"></span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$&#123;str:7:2&#125;</span></span><br><span class="line">78</span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$&#123;str:7:-2&#125;</span></span><br><span class="line">7890abcdef</span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$&#123;str: -7&#125;</span></span><br><span class="line">bcdefgh</span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$&#123;str: -7:0&#125;</span></span><br><span class="line"></span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$&#123;str: -7:2&#125;</span></span><br><span class="line">bc</span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$&#123;str: -7:-2&#125;</span></span><br><span class="line">bcdef</span><br></pre></td></tr></table></figure>
-<p>如果参数是 <code>&#39;@&#39;</code>，结果是从 offset 开始的 length 长度的参数。相对于大于最大位置参数的负偏移，因此偏移 -1 为最后一个参数的位置。如果 length 小于零，则报错。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">set</span> -- 1 2 3 4 5 6 7 8 9 0 a b c d e f g h</span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$&#123;@:7&#125;</span></span><br><span class="line">7 8 9 0 a b c d e f g h</span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$&#123;@:7:0&#125;</span></span><br><span class="line"></span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$&#123;@:7:2&#125;</span></span><br><span class="line">7 8</span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$&#123;@:7:-2&#125;</span></span><br><span class="line">bash: -2: substring expression &lt; 0</span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$&#123;@: -7:2&#125;</span></span><br><span class="line">b c</span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$&#123;@: -7:0&#125;</span></span><br><span class="line">/bash 1 2 3 4 5 6 7 8 9 0 a b c d e f g h</span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$&#123;@:0:2&#125;</span></span><br><span class="line">/bash 1</span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$&#123;@: -7:0&#125;</span></span><br></pre></td></tr></table></figure>
-<p>如果参数是由 <code>@</code> 或 <code>*</code> 索引的数组，结果是从 offset 开始的 length 长度的参数。相对于大于最大位置参数的负偏移，因此偏移 -1 为最后一个参数的位置。如果 length 小于零，则报错。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">$ array=(0 1 2 3 4 5 6 7 8 9 0 a b c d e f g h)</span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$&#123;array[@]:7&#125;</span></span><br><span class="line">7 8 9 0 a b c d e f g h</span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$&#123;array[@]:7:2&#125;</span></span><br><span class="line">7 8</span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$&#123;array[@]: -7:2&#125;</span></span><br><span class="line">b c</span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$&#123;array[@]: -7:-2&#125;</span></span><br><span class="line">bash: -2: substring expression &lt; 0</span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$&#123;array[@]:0&#125;</span></span><br><span class="line">0 1 2 3 4 5 6 7 8 9 0 a b c d e f g h</span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$&#123;array[@]:0:2&#125;</span></span><br><span class="line">0 1</span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$&#123;array[@]: -7:0&#125;</span></span><br></pre></td></tr></table></figure>
-<p>应用于关联数组的子串扩展会产生未定义的结果</p>
-<p>除非使用位置参数，否则子串索引从零开始，在这种情况下，索引默认从 1 开始。如果 offset 为0，并且使用了位置参数，则会在 list 中添加 <code>$@</code> 前缀</p>
-<ul>
-<li>查找参数名</li>
+<h3 id="六、工具类语言学习"><a href="#六、工具类语言学习" class="headerlink" title="六、工具类语言学习"></a>六、工具类语言学习</h3><ul>
+<li><a href="https://jsonnet.org/learning/tutorial.html" target="_blank" rel="noopener">Jsonnet 学习</a></li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$&#123;!prefix*&#125;</span></span><br><span class="line"><span class="variable">$&#123;!prefix@&#125;</span></span><br></pre></td></tr></table></figure>
-<p>shell 会自动将其展开为所有以 prefix 开头的参数名。如：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ var1=</span><br><span class="line">$ var2=</span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$&#123;!var*&#125;</span></span><br><span class="line">var1 var2</span><br></pre></td></tr></table></figure>
-<ul>
-<li>数组 key 展开</li>
+<h3 id="七、科普知识"><a href="#七、科普知识" class="headerlink" title="七、科普知识"></a>七、科普知识</h3><ul>
+<li><p><a href="http://www.ruanyifeng.com/blog/2006/04/post_213.html" target="_blank" rel="noopener">回车和换行</a></p>
+</li>
+<li><p><a href="http://www.ruanyifeng.com/blog/2007/10/ascii_unicode_and_utf-8.html" target="_blank" rel="noopener">字符编码：ASCLL、Unicode、UTF-8</a></p>
+</li>
+<li><p><a href="http://www.ruanyifeng.com/blog/2009/06/unix_philosophy.html" target="_blank" rel="noopener">Unix 哲学</a></p>
+</li>
+<li><p><a href="http://www.ruanyifeng.com/blog/2009/08/twos_complement.html" target="_blank" rel="noopener">关于 2 的补码</a></p>
+</li>
+<li><p><a href="http://www.ruanyifeng.com/blog/2010/03/unix_copyright_history.html" target="_blank" rel="noopener">Unix 版权史</a></p>
+</li>
+<li><p><a href="http://www.ruanyifeng.com/blog/2010/06/ieee_floating-point_representation.html" target="_blank" rel="noopener">浮点数的二进制表示</a></p>
+</li>
+<li><p><a href="https://mp.weixin.qq.com/s/wuu9VCETyBHSzfMRtxmtTg" target="_blank" rel="noopener">摩斯电吗</a></p>
+</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$&#123;!name[@]&#125;</span></span><br><span class="line"><span class="variable">$&#123;!name[*]&#125;</span></span><br></pre></td></tr></table></figure>
-<p>如果 name 是数组变量，则展开到 name 中指定的数组索引列表。如果 name 不是数组，则在设置 name 时扩展为 0，否则为 null。用 <code>@</code> 的时候，扩展出现在双引号内，每个键扩展为一个单独的单词。</p>
-<ul>
-<li>参数长度</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$&#123;#parameter&#125;</span></span><br></pre></td></tr></table></figure>
-<p>例子:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ name=123456789</span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$&#123;#name&#125;</span></span><br><span class="line">9</span><br><span class="line">$ array=(a b c)</span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$&#123;#array[@]&#125;</span> <span class="comment"># echo $&#123;#array[*]&#125;</span></span><br><span class="line">3</span><br></pre></td></tr></table></figure>
-<ul>
-<li>“掐头去尾”</li>
-</ul>
-<p>截取又分两种操作，”掐头”和去”去尾”。与正则表达式中不同，头和尾在这里对应的符号分别是”#”和”%”。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 掐头</span></span><br><span class="line"><span class="variable">$&#123;parameter#word&#125;</span> 或 <span class="variable">$&#123;parameter##word&#125;</span></span><br></pre></td></tr></table></figure>
-<p>作用：从 parameter 头部开始匹配 word，并删除成功匹配的部分。在构造 word 时可以使用 “<em>“ 表示任意长度字符，”?” 表示单位长度字符，并可用形如 “[a-c]” 的方式来指定匹配 “abc” 中的任意字符。如果参数是 <code>@</code> 或者 `</em><code>，则将规则应用于每个位置的参数并返回结果列表，如果参数是数组且下标为</code>@<code>或者</code>*`，则将规则应用于每个数组元素，并返回数组</p>
-<p>另外，”#” 和 “##” 的区别在于前者是最短匹配，而后者是最长匹配；实际上就是正则表达式中的”懒惰”和”贪婪”的概念。下面的例子能够很清楚地看出这两者的区别。比如说:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ var=brbread</span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$&#123;var##*br&#125;</span> <span class="comment"># 匹配最长</span></span><br><span class="line">ead</span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$&#123;var#*br&#125;</span> <span class="comment"># 只匹配一次</span></span><br><span class="line">bread</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 去尾</span></span><br><span class="line"><span class="variable">$&#123;parameter%word&#125;</span> 或 <span class="variable">$&#123;parameter%%word&#125;</span></span><br></pre></td></tr></table></figure>
-<p>作用: 与掐头相同，唯一不同的是从 ${parameter} 的尾部开始匹配。如果参数是 <code>@</code> 或者 <code>*</code>，则将规则应用于每个位置的参数并返回结果列表，如果参数是数组且下标为 <code>@</code> 或者 <code>*</code>，则将规则应用于每个数组元素，并返回数组，例子:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ var=<span class="string">"La.Maison.en.Petits.Cubes.avi"</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$&#123;var%.*&#125;</span></span><br><span class="line">La.Maison.en.Petits.Cubes</span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$&#123;var%%.*&#125;</span></span><br><span class="line">La</span><br></pre></td></tr></table></figure>
-<ul>
-<li>字符串替换</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$&#123;parameter/pattern/string&#125;</span></span><br></pre></td></tr></table></figure>
-<p>作用: 将 ${parameter| 中出现的第一个 pattern 替换为 string。如果参数是 <code>@</code> 或者 <code>*</code>，则将规则应用于每个位置的参数并返回结果列表，如果参数是数组且下标为 <code>@</code> 或者 <code>*</code>，则将规则应用于每个数组元素，并返回数组。值得注意的是，除了 “*”, “?” 和 “[]” 以外，pattern 的头部还可以使用下面几个字符:</p>
-<table>
-<thead>
-<tr>
-<th>表达式</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>“/“</td>
-<td>如果 pattern 以 “/“ 起始，则所有的匹配项都要替换。而默认的行为只是替换最左侧的一个</td>
-</tr>
-<tr>
-<td>“#”</td>
-<td>如果 pattern 以 “#” 起始，则与正则表达式匹配规则相同，只有在 ${parameter} 的头部找到匹配项才会进行替换</td>
-</tr>
-<tr>
-<td>“%”</td>
-<td>与 “#” 类似，只是这次变成了尾部匹配</td>
-</tr>
-</tbody>
-</table>
-<p>例子：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">var=<span class="string">"see"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;var/e/a&#125;</span> <span class="comment">#只有第一个e会被替换</span></span><br><span class="line">sae</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;var/ee/it&#125;</span></span><br><span class="line">sit</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;var//e/a&#125;</span> <span class="comment">#所有的e都会被替换</span></span><br><span class="line">saa</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;var/#e/a&#125;</span> <span class="comment">#头部的e才会被替换</span></span><br><span class="line">see</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;var/#s/b&#125;</span></span><br><span class="line">bee</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;var/%e/a&#125;</span></span><br><span class="line">sea</span><br></pre></td></tr></table></figure>
-<ul>
-<li>大小写转换</li>
-</ul>
-<p>此展开修改参数中字母字符的大小写。该模式被展开以生成与文件名展开中一样的模式。参数展开值中的每个字符都将根据模式进行测试，如果匹配模式，则转换其大小写。该模式不应尝试匹配多个字符。</p>
-<table>
-<thead>
-<tr>
-<th>表达式</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>${parameter^pattern}</td>
-<td><code>^</code> 操作符将匹配模式的小写字母转换为大写字母，只转换第一个字符</td>
-</tr>
-<tr>
-<td>${parameter,pattern}</td>
-<td><code>,</code> 操作符将匹配的大写字母转换为小写字母，只转换第一个字符</td>
-</tr>
-<tr>
-<td>${parameter,,pattern} <br> ${parameter^^pattern}</td>
-<td><code>^^</code> 和 <code>,,</code> 反转所有匹配到的字符</td>
-</tr>
-</tbody>
-</table>
-<p>如果省略了 pattern，则认为是 <code>?</code>，将匹配所有字符。如果参数是 <code>@</code> 或者 <code>*</code>，则将规则应用于每个位置的参数并返回结果列表，如果参数是数组且下标为 <code>@</code> 或者 <code>*</code>，则将规则应用于每个数组元素，并返回数组。</p>
-<ul>
-<li>一些特殊展开</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$&#123;parameter@operator&#125;</span></span><br></pre></td></tr></table></figure>
-<p>这个展开可以是参数值的转换，也可以是参数本身的信息，这取决于操作符的值。每一个操作符是一个字母：</p>
-<table>
-<thead>
-<tr>
-<th>操作符</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Q</td>
-<td>展开是一个字符串，它是可以作为输入重用的格式中引用的参数值</td>
-</tr>
-<tr>
-<td>E</td>
-<td>展开是一个字符串，它是参数的值，使用 $’…’ 引用机制展开反斜杠转义序列</td>
-</tr>
-<tr>
-<td>P</td>
-<td>展开是一个字符串，它是将 parameter 的值展开为提示字符串的结果(请参见<a href="https://www.gnu.org/software/bash/manual/html_node/Controlling-the-Prompt.html#Controlling-the-Prompt" target="_blank" rel="noopener">控制提示</a>)</td>
-</tr>
-<tr>
-<td>A</td>
-<td>展开是赋值语句或声明命令形式的字符串，如果对其求值，将用其属性和值重新创建参数</td>
-</tr>
-<tr>
-<td>a</td>
-<td>展开是由表示参数属性的标志值组成的字符串</td>
-</tr>
-</tbody>
-</table>
-<p>如果参数是 <code>@</code> 或者 <code>*</code>，则将规则应用于每个位置的参数并返回结果列表，如果参数是数组且下标为 <code>@</code> 或者 <code>*</code>，则将规则应用于每个数组元素，并返回数组。</p>
-<h3 id="Command-Substitution"><a href="#Command-Substitution" class="headerlink" title="Command Substitution"></a><a href="https://www.gnu.org/software/bash/manual/html_node/Command-Substitution.html#Command-Substitution" target="_blank" rel="noopener">Command Substitution</a></h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="built_in">command</span>) or `<span class="built_in">command</span>`</span><br></pre></td></tr></table></figure>
-<p>Bash 通过在子 shell 环境中执行命令并使用命令的标准输出替换命令替换来执行扩展，并删除任何尾随的换行符。嵌入的换行不会被删除。但是在 word splitting 的时候会被移除。 命令 <code>${cat file}</code> 可以被执行得更快的 <code>$(&lt; file)</code> 替代。</p>
-<p>当使用反引号的形式进行替换时，反斜杠保留其字面意义，除非后面跟着 <code>&#39;$&#39;</code>，<code>&#39;`&#39;</code>，要么 <code>&#39;\&#39;</code>。第一个不带反斜杠的反引号会终止命令替换。当用 <code>${command}</code> 的形式，所有括号之间的字符组成命令，没有任何特殊的情况。</p>
-<p>command substitution 可以嵌套，要在使用反引号形式时进行嵌套，请使用反斜杠转义内部反引号。如果替换出现在双引号中，则不会对结果执行 word splitting 和 文件名扩展。</p>
-<h3 id="Arithmetic-Expansion"><a href="#Arithmetic-Expansion" class="headerlink" title="Arithmetic Expansion"></a><a href="https://www.gnu.org/software/bash/manual/html_node/Arithmetic-Expansion.html#Arithmetic-Expansion" target="_blank" rel="noopener">Arithmetic Expansion</a></h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$(( expression ))</span><br></pre></td></tr></table></figure>
-<p>该表达式被视为在双引号内，但括号内的双引号没有被特别处理。表达式中的所有标记都经 parameter expansion，variable expansion，command substitution，quote removal。结果被视为要计算的算术表达式。算术扩展可以嵌套。如果表达式无效，Bash 将打印一条消息，指示标准错误失败并且不会发生替换。</p>
-<p>计算规则: <a href="https://www.gnu.org/software/bash/manual/html_node/Shell-Arithmetic.html#Shell-Arithmetic" target="_blank" rel="noopener">Shell Arithmetic</a></p>
-<h3 id="Process-Substitution"><a href="#Process-Substitution" class="headerlink" title="Process Substitution"></a><a href="https://www.gnu.org/software/bash/manual/html_node/Process-Substitution.html#Process-Substitution" target="_blank" rel="noopener">Process Substitution</a></h3><p>Process substitution 允许使用文件名引用进程的输入或输出。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;(list)</span><br><span class="line"><span class="comment"># or</span></span><br><span class="line">&gt;(list)</span><br></pre></td></tr></table></figure>
-<p>进程列表以异步的方式运行，其输入或输出显示为文件名。作为扩展的结果，此文件名作为参数传递给当前命令。如果使用 <code>&gt;(list)</code> 形式，写入文件将提供列表输入。如果使用 <code>&lt;(list)</code>，则应读取作为参数传递的文件以获取列表的输出。请注意，在 <code>&lt;</code> 或 <code>&gt;</code> 与左括号之间不能有空格，否则会被解释为重定向。支持命名管道（FIFO）或者命名打开文件的 <code>/dev/fd</code> 方法的系统支持 process substitution。</p>
-<p>可用时，进程替换与参数和变量扩展，命令替换和算术扩展同时执行。</p>
-<h3 id="Word-Splitting"><a href="#Word-Splitting" class="headerlink" title="Word Splitting"></a><a href="https://www.gnu.org/software/bash/manual/html_node/Word-Splitting.html#Word-Splitting" target="_blank" rel="noopener">Word Splitting</a></h3><p>Shell 扫描参数扩展、命令替换和算术扩展的结果，这些结果在双引号内没有应用 word splitting。</p>
-<p>Shell 将 <code>IFS</code> 的每个字符视为分隔符，并使用这些字符作为字段终止符将其他扩展的结果拆分为单词。</p>
-<p>如果 <code>IFS</code> 没有设置或者就是默认值 <code>&lt;space&gt;&lt;tab&gt;&lt;newline&gt;</code>，那么扩展结果的开始及末尾的 <code>&lt;space&gt;&lt;tab&gt;&lt;newline&gt;</code> 会被忽略，并且任何不在开头或者结尾的 <code>IFS</code> 字符序列都用于分隔单词。</p>
-<p>如果 <code>IFS</code> 具有缺省值以外的值，则忽略开始及结尾的空白字符序列 <code>&lt;space&gt;&lt;tab&gt;&lt;newline&gt;</code>，只要空白字符是在<code>IFS</code> 里的值（一个 <code>IFS</code> 空白字符）。非 <code>IFS</code> 空白的 <code>IFS</code> 中的任何字符，以及任何相邻的 <code>IFS</code> 空白字符，都将分隔字段。<code>IFS</code> 空格字符序列也被当作分隔符。如果 <code>IFS</code> 的值为null，则不会发生分词。</p>
-<p>保留显式空参数（” “ 或 ‘ ‘）并将其作为空字符串传递给命令。将删除由于没有值的参数的扩展而产生的不带引号的隐式空参数。如果在双引号内扩展没有值的参数，则会生成并返回 null 参数，并将其作为空字符串传递给命令。当引用的 null 参数作为扩展为非 null 的单词的一部分出现时，将删除 null 参数。也就是说，在 word splitting 和 null argument removal 之后，单词 <code>-d&#39; &#39;</code>变为 <code>-d</code>。</p>
-<p>请注意，如果未发生 expansion，则不会进行拆分</p>
-<h3 id="Filename-Expansion"><a href="#Filename-Expansion" class="headerlink" title="Filename Expansion"></a><a href="https://www.gnu.org/software/bash/manual/html_node/Filename-Expansion.html#Filename-Expansion" target="_blank" rel="noopener">Filename Expansion</a></h3><ul>
-<li><a href="https://www.gnu.org/software/bash/manual/html_node/Pattern-Matching.html#Pattern-Matching" target="_blank" rel="noopener">Pattern Matching</a>: How the shell matches patterns</li>
-</ul>
-<p>word splitting 之后，除非设置 <code>-f</code> 选项（请参阅 <a href="https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html#The-Set-Builtin" target="_blank" rel="noopener">The Set Builtin</a>）， bash 会扫描每个单词的字符 <code>&#39;*&#39;</code>，<code>&#39;?&#39;</code>，<code>&#39;[&#39;</code>。如果出现了这些字符的任意一个，那么这个单词被视为是个 pattern，并替换为与该 pattern 匹配的按字母顺序排列的文件名列表（请参阅 <a href="https://www.gnu.org/software/bash/manual/html_node/Pattern-Matching.html#Pattern-Matching" target="_blank" rel="noopener">Pattern Matching</a>）。如果未找到匹配的文件名，并且禁用了 shell 的 <code>nullglob</code> 选项，则该字保持不变。如果设置了 <code>nullglob</code> 选项，但未找到匹配项，则删除该单词。如果设置了 shell 的 <code>failglob</code> 选项，并且未找到匹配项，则会打印错误消息并且不执行该命令。如果启用了 shell 的 <code>nocaseglob</code> 选项，则执行匹配而不考虑字母字符的情况。</p>
-<p>当一个 pattern 用于文件名扩展时，除非设置了 shell 的 <code>dotglob</code> 这个选项，否则文件名开头的字符 <code>&#39;.&#39;</code> 或者 <code>&#39;./&#39;</code> 应该明确匹配。即使 <code>dotglob</code> 已经设置，<code>&#39;.&#39;</code> 及 <code>&#39;..&#39;</code> 文件名都必须显式匹配。其他情况下，<code>&#39;.&#39;</code> 字符不受特别对待。</p>
-<p>匹配文件名时，斜杠字符必须始终通过模式中的斜杠显式匹配，但在其他匹配上下文中，它可以通过特殊模式字符进行匹配，如下所述（请参阅 <a href="https://www.gnu.org/software/bash/manual/html_node/Pattern-Matching.html#Pattern-Matching" target="_blank" rel="noopener">Pattern Matching</a>）。</p>
-<p><code>nocaseglob</code>, <code>nullglob</code>, <code>failglob</code> 和 <code>dotglob</code> 的描述请见 <a href="https://www.gnu.org/software/bash/manual/html_node/The-Shopt-Builtin.html#The-Shopt-Builtin" target="_blank" rel="noopener">The Shopt Builtin</a> <code>shopt</code> 描述。</p>
-<p>Shell 的 <code>GLOBIGNORE</code> 变量可以用来限制该组匹配的文件名。如果设置了 <code>GLOBIGNORE</code>,<code>GLOBIGNORE</code> 则从匹配列表中删除与其中一个模式匹配的每个匹配文件名 。如果设置了 <code>nocaseglob</code>，<code>GLOBIGNORE</code> 则执行与模式的匹配 而不考虑大小写。文件名 <code>.</code> 和 <code>..</code> 在 <code>GLOBIGNORE</code> 设置时始终忽略，而不是 null。但是，设置 <code>GLOBIGNORE</code> 为非 null 值具有启用 <code>dotglob</code> shell 选项的效果，因此所有其他以 <code>&#39;.&#39;</code> 开头的文件都会匹配。为了获得忽略文件名以 <code>&#39;.&#39;</code> 开头的行为，就在 <code>GLOBIGNORE</code> 模式下设置 <code>&#39;.*&#39;</code> 的 patterns。在未设置 <code>GLOBIGNORE</code> 时， <code>dotglob</code> 是禁用的。</p>
-<h3 id="Quote-Removal"><a href="#Quote-Removal" class="headerlink" title="Quote Removal"></a><a href="https://www.gnu.org/software/bash/manual/html_node/Quote-Removal.html#Quote-Removal" target="_blank" rel="noopener">Quote Removal</a></h3><p>在进行前面的扩展后，所有出现的未被的引号引用的字符如：<code>\</code>，<code>&#39;</code>，<code>&quot;</code>，这些不是由上述某个扩展产生的结果都会被删除</p>
 
       
 
@@ -477,7 +248,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">shell</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">已阅</a>
         		</li>
       		
 		</ul>
@@ -533,7 +304,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2019/08/21/bash_expansion/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2019/09/24/read/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -547,18 +318,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2019/09/24/read/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          阅读列表
-        
-      </div>
-    </a>
   
-  
-    <a href="/2019/06/12/commit_message/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">怎么写 Commit Message？</div>
+    <a href="/2019/08/21/bash_expansion/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Shell Expansion</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -585,7 +347,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#说明"><span class="toc-number">1.</span> <span class="toc-text">说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#七种-expansion"><span class="toc-number">2.</span> <span class="toc-text">七种 expansion</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Brace-Expansion"><span class="toc-number">2.1.</span> <span class="toc-text">Brace Expansion</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#表达式一，用逗号分割"><span class="toc-number">2.1.1.</span> <span class="toc-text">表达式一，用逗号分割</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#表达式二，-x-y-incr"><span class="toc-number">2.1.2.</span> <span class="toc-text">表达式二，{x..y[..incr]}</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#注意点"><span class="toc-number">2.1.3.</span> <span class="toc-text">注意点</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Tilde-Expansion"><span class="toc-number">2.2.</span> <span class="toc-text">Tilde Expansion</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#注意点-1"><span class="toc-number">2.2.1.</span> <span class="toc-text">注意点</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Shell-Parameter-Expansion"><span class="toc-number">2.3.</span> <span class="toc-text">Shell Parameter Expansion</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Command-Substitution"><span class="toc-number">2.4.</span> <span class="toc-text">Command Substitution</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Arithmetic-Expansion"><span class="toc-number">2.5.</span> <span class="toc-text">Arithmetic Expansion</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Process-Substitution"><span class="toc-number">2.6.</span> <span class="toc-text">Process Substitution</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Word-Splitting"><span class="toc-number">2.7.</span> <span class="toc-text">Word Splitting</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Filename-Expansion"><span class="toc-number">2.8.</span> <span class="toc-text">Filename Expansion</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Quote-Removal"><span class="toc-number">2.9.</span> <span class="toc-text">Quote Removal</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、算法"><span class="toc-number">1.</span> <span class="toc-text">一、算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、计算机网络"><span class="toc-number">2.</span> <span class="toc-text">二、计算机网络</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、Go-语言源码解析"><span class="toc-number">3.</span> <span class="toc-text">三、Go 语言源码解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四、Go-语言相关解析"><span class="toc-number">4.</span> <span class="toc-text">四、Go 语言相关解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#五、缓存"><span class="toc-number">5.</span> <span class="toc-text">五、缓存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#六、工具类语言学习"><span class="toc-number">6.</span> <span class="toc-text">六、工具类语言学习</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#七、科普知识"><span class="toc-number">7.</span> <span class="toc-text">七、科普知识</span></a></li></ol>
                     </div>
                 </span>
             </div>
