@@ -70,4 +70,4 @@ tags:
 
 - [浮点数的二进制表示](http://www.ruanyifeng.com/blog/2010/06/ieee_floating-point_representation.html)
 
-- [摩斯电吗](https://mp.weixin.qq.com/s/wuu9VCETyBHSzfMRtxmtTg)
+- [摩斯电码](https://mp.weixin.qq.com/s/wuu9VCETyBHSzfMRtxmtTg)
