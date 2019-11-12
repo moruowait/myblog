@@ -152,6 +152,93 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-logrotate" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/04/18/logrotate/">什么是 logrotate ？</a>
+    </h1>
+  
+
+        
+        <a href="/2019/04/18/logrotate/" class="archive-article-date">
+  	<time datetime="2019-04-18T10:28:44.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-18</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="什么是-logrotate"><a href="#什么是-logrotate" class="headerlink" title="什么是 logrotate"></a>什么是 logrotate</h2><p>logrotate 旨在简化生成大量日志文件的系统的管理。它允许自动循环、压缩、删除和邮寄日志文件。每个日志文件可以按每天、每周、每月的粒度来处理，也可以在其增长过大时处理。</p>
+<p>通常来说，logrotate 作为日常 cron 作业运行。它一天内修改日志的次数不会超过一次，除非该日志的标准基于日志的大小，并且 logrotate 每天运行一次以上，或者使用 <code>-f</code> 或 <code>-force</code> 的选项。</p>
+<p>在命令行上可以给出任意数量的配置文件。稍后的配置文件可能会覆盖前面文件中给出的选项，因此列出 logrotate 配置文件的顺序很重要。通常，应该使用一个配置文件，其中包含需要的任何其他配置文件。有关如何使用 include 指令来完成此任务的更多信息，请参见 man page。如果在命令行上给出一个目录，则该目录中的每个文件都是配置文件。</p>
+<p>如果没有给出命令行参数，logrotate 将打印版本和版权信息，以及一个简短的使用总结。如果在循环日志时发生任何错误，logrotate 将以非零状态退出。</p>
+        
+          <a class="article-more-a" href="/2019/04/18/logrotate/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">技术名词</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">运维</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Log</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/04/18/logrotate/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-rss" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -324,7 +411,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shell</a>
+                <a href="javascript:void(0)" class="js-tag color5">技术名词</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -336,7 +423,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">技术名词</a>
+                <a href="javascript:void(0)" class="js-tag color1">shell</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -348,15 +439,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">已阅</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">PATH</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">MAC</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">已阅</a>
               </li>
              
               <li class="article-tag-list-item">
